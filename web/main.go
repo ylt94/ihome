@@ -9,5 +9,4 @@ func main() {
 	R := gin.Default()
 	R = routers.LoadRouters(R)
 	R.Run()
-
 }
