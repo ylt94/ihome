@@ -14,6 +14,7 @@ import (
 	"net/http"
 )
 
+//获取图片验证码
 func GetImageCode(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 
@@ -41,6 +42,7 @@ func GetImageCode(ctx *gin.Context) {
 	return
 }
 
+//发送短信验证码
 func SendSMS (ctx *gin.Context) {
 	phone := ctx.Param("phone")
 	if len(phone) == 0 {

@@ -4,7 +4,7 @@ import (
 	"context"
 	log "github.com/micro/go-micro/v2/logger"
 
-	sendSMS "sendSMS/proto/sendSMS"
+	sendSMS "ihome/services/sendSMS/proto/sendSMS"
 )
 
 type SendSMS struct{}

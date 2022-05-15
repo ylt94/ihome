@@ -9,11 +9,14 @@ service SendSMS {
 message Message {
 }
 
+enum SMSType {
+    Register  = 0;
+}
+
 message Request {
 	string phone = 1;
-	string msgTmp = 2;
-	int32 code = 3;
-	int32 codeLen = 4;
+	int32 codeLen = 2;
+    SMSType Type = 3;
 }
 
 
