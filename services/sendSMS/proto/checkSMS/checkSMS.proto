@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package go.micro.service.sendSMS;
+
+service CheckSMS {
+	rpc check(Request) returns (Response) {}
+}
+
+message Message {
+}
+
+message Request {
+	string phone = 1;
+}
+
+enum EheckStatus {
+    Fail = 0;
+    Succ = 1;
+    Expire = 2;
+}
+message Response {
+    EheckStatus status = 1;
+}
+

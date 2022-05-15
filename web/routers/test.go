@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func testRoutes(R *gin.Engine) {
+func testRoutes(R *gin.RouterGroup) {
 	R.GET("/", func(c *gin.Context){
 		c.String(http.StatusOK, "test")
 	})

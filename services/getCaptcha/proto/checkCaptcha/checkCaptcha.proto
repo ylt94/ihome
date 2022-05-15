@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package go.micro.service.checkCaptcha;
+
+service CheckCaptcha {
+	rpc Check(Request) returns (Response) {}
+}
+
+message Message {
+}
+
+message Request {
+	string number = 1;
+	string uuid = 2;
+}
+
+enum EheckStatus {
+    Fail = 0;
+    Succ = 1;
+    Expire = 2;
+}
+message Response {
+    EheckStatus status = 1;
+}

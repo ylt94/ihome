@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package go.micro.service.sendSMS;
+
+service SendSMS {
+	rpc send(Request) returns (Response) {}
+}
+
+message Message {
+}
+
+message Request {
+	string phone = 1;
+	string msgTmp = 2;
+	int32 code = 3;
+	int32 codeLen = 4;
+}
+
+
+message Response {
+	string phone = 1;
+	int32 code = 2;
+}
