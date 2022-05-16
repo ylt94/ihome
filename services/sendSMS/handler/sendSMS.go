@@ -2,10 +2,9 @@ package handler
 
 import (
 	"context"
-	"github.com/garyburd/redigo/redis"
 	log "github.com/micro/go-micro/v2/logger"
-	"ihome/services/sendSMS/utils"
 	sendSMS "ihome/services/sendSMS/proto/sendSMS"
+	"ihome/services/sendSMS/utils"
 	"math/rand"
 	"strconv"
 	"time"
