@@ -17,11 +17,13 @@ func (e *CheckCaptcha) Check(Ctx context.Context, req *checkCaptcha.Request, rsp
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 
 	val, err := client.Do("get", req.Uuid)
 	if err != nil {
 		return err
 	}
+
 	code, err := redis.String(val, err)
 	if err != nil {
 		return err
@@ -33,7 +35,9 @@ func (e *CheckCaptcha) Check(Ctx context.Context, req *checkCaptcha.Request, rsp
 		rsp.Status = checkCaptcha.EheckStatus_Fail
 	} else {
 		rsp.Status = checkCaptcha.EheckStatus_Succ
+		client.Do("del", req.Uuid)
 	}
+
 
 	return nil
 }

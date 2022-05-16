@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"ihome/services/sendSMS/utils"
 
 	log "github.com/micro/go-micro/v2/logger"
 
@@ -12,6 +13,26 @@ type CheckSMS struct{}
 
 // Call is a single request handler called via client.Call or the generated client code
 func (e *CheckSMS) Check(ctx context.Context, req *checkSMS.Request, rsp *checkSMS.Response) error {
-	log.Info("Received SendSMS.Call request")
+	log.Info("Received CheckSMS.Call request")
+	client := utils.Redis()
+	defer client.Close()
+
+	key := checkSMS.SMSType_name[int32(checkSMS.SMSType_Register)] + "_" + req.Phone
+	res ,err := client.Do("get", key)
+
+	val, err := client.String(res, err)
+	if err != nil {
+		return err
+	}
+	if val == "" {
+		rsp.Status = checkSMS.EheckStatus_Expire
+	} else if val != string(req.Code) {
+		rsp.Status = checkSMS.EheckStatus_Fail
+	} else if val == string(req.Code) {
+		rsp.Status = checkSMS.EheckStatus_Succ
+		client.Do("del", key)
+	}
+	rsp.Status = checkSMS.EheckStatus_Succ
+
 	return nil
 }
