@@ -7,6 +7,7 @@ import (
 	"ihome/services/sendSMS/utils"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,9 +24,11 @@ func (e *SendSMS) Send(ctx context.Context, req *sendSMS.Request, rsp *sendSMS.R
 	//生成验证码
 	rand.Seed(time.Now().UnixNano())
 	var code string
+	var codeString strings.Builder
 	for i := 0; i < int(codeLne); i++ {
-		code += string(rand.Intn(10))
+		codeString.WriteString(string(rand.Intn(10)))
 	}
+	code = codeString.String()
 
 	rsp.Phone = req.Phone
 	codeInt, err := strconv.Atoi(code)
