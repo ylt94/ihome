@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"ihome/services/sendSMS/utils"
 
 	log "github.com/micro/go-micro/v2/logger"
@@ -26,13 +27,15 @@ func (e *CheckSMS) Check(ctx context.Context, req *checkSMS.Request, rsp *checkS
 	}
 	if val == "" {
 		rsp.Status = checkSMS.EheckStatus_Expire
+		return errors.New("手机验证码已过期!")
 	} else if val != string(req.Code) {
 		rsp.Status = checkSMS.EheckStatus_Fail
+		return errors.New("手机验证码已错误!")
 	} else if val == string(req.Code) {
 		rsp.Status = checkSMS.EheckStatus_Succ
 		client.Do("del", key)
+		return nil
 	}
-	rsp.Status = checkSMS.EheckStatus_Succ
 
 	return nil
 }

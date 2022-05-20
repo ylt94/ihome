@@ -1,4 +1,4 @@
-module ihome/services/sendSMS
+module github.com/ylt94/ihome/services/sendSMS
 
 go 1.13
 

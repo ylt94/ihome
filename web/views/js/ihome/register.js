@@ -132,7 +132,9 @@ $(document).ready(function() {
         var req = {
             "mobile": mobile,
             "password": passwd,
-            "sms_code": phoneCode
+            "sms_code": phoneCode,
+            "confirm_password": passwd2,
+            "uuid": imageCodeId
         };
 
         // // 方式二

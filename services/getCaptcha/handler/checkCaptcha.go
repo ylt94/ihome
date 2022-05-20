@@ -2,9 +2,10 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"github.com/garyburd/redigo/redis"
-	checkCaptcha "ihome/services/getCaptcha/proto/checkCaptcha"
 	log "github.com/micro/go-micro/v2/logger"
+	checkCaptcha "ihome/services/getCaptcha/proto/checkCaptcha"
 	"ihome/services/getCaptcha/utils"
 )
 type CheckCaptcha struct {
@@ -31,13 +32,15 @@ func (e *CheckCaptcha) Check(Ctx context.Context, req *checkCaptcha.Request, rsp
 
 	if code == "" {
 		rsp.Status = checkCaptcha.EheckStatus_Expire
+		return errors.New("图形验证码已过期，请点击刷新")
 	} else if code != req.Number {
 		rsp.Status = checkCaptcha.EheckStatus_Fail
+		return errors.New("图形验证码错误!")
 	} else {
 		rsp.Status = checkCaptcha.EheckStatus_Succ
 		client.Do("del", req.Uuid)
+		return nil
 	}
-
 
 	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"ihome/web/utils"
 	"image/png"
 	"net/http"
+	"regexp"
 )
 
 //获取图片验证码
@@ -51,7 +52,13 @@ func SendSMS (ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, data)
 		return
 	}
-	//TODO 正则验证手机号
+
+	regular := "^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\\d{8}$";
+	reg := regexp.MustCompile(regular)
+	if !reg.MatchString(phone) {
+		ctx.JSON(http.StatusOK,getReturn("", utils.RECODE_MOBILEERR, "手机号格式错误!"))
+		return
+	}
 
 	microObj := micro.NewService()
 

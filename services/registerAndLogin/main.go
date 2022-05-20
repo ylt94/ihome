@@ -3,27 +3,24 @@ package main
 import (
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2"
-	"registerAndLogin/handler"
-	"registerAndLogin/subscriber"
+	handler "ihome/services/registerAndLogin/handler"
 
-	registerAndLogin "registerAndLogin/proto/registerAndLogin"
+	register "ihome/services/registerAndLogin/proto/register"
 )
 
 func main() {
 	// New Service
 	service := micro.NewService(
-		micro.Name("go.micro.service.registerAndLogin"),
+		micro.Name("go.micro.service.register"),
 		micro.Version("latest"),
 	)
 
 	// Initialise service
-	service.Init()
+	//service.Init()
 
 	// Register Handler
-	registerAndLogin.RegisterRegisterAndLoginHandler(service.Server(), new(handler.RegisterAndLogin))
+	register.RegisterRegisterHandler(service.Server(), new(handler.Register))
 
-	// Register Struct as Subscriber
-	micro.RegisterSubscriber("go.micro.service.registerAndLogin", service.Server(), new(subscriber.RegisterAndLogin))
 
 	// Run service
 	if err := service.Run(); err != nil {

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package go.micro.service.register;
+
+service Register {
+	rpc Register(Request) returns (Response) {}
+}
+
+enum RegisterStatus {
+    Fail  = 0;
+    Success = 1;
+}
+
+message Request {
+	string CaptchaCode = 1;
+	string Phone = 2;
+	string Pwd = 3;
+	string ConfirmPwd = 4;
+	string Uuid = 5;
+	string SMSCode = 6;
+}
+
+message Response {
+	RegisterStatus Status = 1;
+}

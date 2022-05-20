@@ -16,7 +16,7 @@ enum SMSType {
 message Request {
 	string phone = 1;
 	SMSType Type = 2;
-	int32 code = 3;
+	string code = 3;
 }
 
 enum EheckStatus {

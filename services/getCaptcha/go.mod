@@ -1,4 +1,4 @@
-module ihome/services/getCaptcha
+module github.com/ylt94/ihome/services/getCaptcha
 
 go 1.13
 

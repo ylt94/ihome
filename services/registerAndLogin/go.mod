@@ -1,12 +1,14 @@
-module registerAndLogin
+module github.com/ylt94/ihome/services/registerAndLogin
 
 go 1.13
 
-// This can be removed once etcd becomes go gettable, version 3.4 and 3.5 is not,
-// see https://github.com/etcd-io/etcd/issues/11154 and https://github.com/etcd-io/etcd/issues/11931.
+require (
+	github.com/golang/protobuf v1.4.0
+	github.com/micro/go-micro/v2 v2.9.1
+)
+
 replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 
-require (
-	github.com/micro/go-micro/v2 v2.9.1
-	gorm.io/gorm v1.23.5 // indirect
-)
+replace github.com/services/getCaptcha v1.0.0 => ../services/getCaptcha
+
+replace github.com/services/sendSMS v1.0.0 => ../services/sendSMS
