@@ -63,6 +63,12 @@ func SendSMS (ctx *gin.Context) {
 	microObj := micro.NewService()
 
 	client := sendSMS.NewSendSMSService("go.micro.service.sendSMS", microObj.Client())
+	_, err := client.Send(context.TODO(), &sendSMS.Request{Phone: phone})
+	if err != nil {
+		ctx.JSON(http.StatusOK,getReturn("", utils.RECODE_DATAERR, err.Error()))
+		return
+	}
 
-	client.Send(context.TODO(), &sendSMS.Request{Phone: phone})
+	ctx.JSON(http.StatusOK, getReturn(""))
+	return
 }
