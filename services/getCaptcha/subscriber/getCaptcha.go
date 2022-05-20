@@ -4,7 +4,7 @@ import (
 	"context"
 	log "github.com/micro/go-micro/v2/logger"
 
-	getCaptcha "getCaptcha/proto/getCaptcha"
+	getCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/getCaptcha"
 )
 
 type GetCaptcha struct{}

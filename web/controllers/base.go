@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"ihome/web/utils"
+	"github.com/ylt94/ihome/web/utils"
 )
 
 

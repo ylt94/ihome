@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
 	log "github.com/micro/go-micro/v2/logger"
-	checkCaptcha "ihome/services/getCaptcha/proto/checkCaptcha"
-	"ihome/services/getCaptcha/utils"
+	checkCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/checkCaptcha"
+	"github.com/ylt94/ihome/services/getCaptcha/utils"
 )
 type CheckCaptcha struct {
 

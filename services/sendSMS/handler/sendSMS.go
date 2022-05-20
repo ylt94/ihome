@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	log "github.com/micro/go-micro/v2/logger"
-	sendSMS "ihome/services/sendSMS/proto/sendSMS"
-	"ihome/services/sendSMS/utils"
+	sendSMS "github.com/ylt94/ihome/services/sendSMS/proto/sendSMS"
+	"github.com/ylt94/ihome/services/sendSMS/utils"
 	"math/rand"
 	"strconv"
 	"strings"

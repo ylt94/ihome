@@ -3,9 +3,9 @@ package main
 import (
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2"
-	handler "ihome/services/registerAndLogin/handler"
+	handler "github.com/ylt94/ihome/services/registerAndLogin/handler"
 
-	register "ihome/services/registerAndLogin/proto/register"
+	register "github.com/ylt94/ihome/services/registerAndLogin/proto/register"
 )
 
 func main() {

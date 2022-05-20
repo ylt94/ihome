@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"errors"
-	"ihome/services/sendSMS/utils"
+	"github.com/ylt94/ihome/services/sendSMS/utils"
 
 	log "github.com/micro/go-micro/v2/logger"
 
-	checkSMS "ihome/services/sendSMS/proto/checkSMS"
+	checkSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 )
 
 type CheckSMS struct{}

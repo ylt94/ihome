@@ -8,7 +8,7 @@ import (
 
 	log "github.com/micro/go-micro/v2/logger"
 
-	register "ihome/services/registerAndLogin/proto/register"
+	register "github.com/ylt94/ihome/services/registerAndLogin/proto/register"
 	getCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/getCaptcha"
 	sendSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 )

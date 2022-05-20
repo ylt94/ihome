@@ -3,10 +3,10 @@ package main
 import (
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2"
-	"ihome/services/sendSMS/handler"
+	"github.com/ylt94/ihome/services/sendSMS/handler"
 
-	sendSMS "ihome/services/sendSMS/proto/sendSMS"
-	checkSMS "ihome/services/sendSMS/proto/checkSMS"
+	sendSMS "github.com/ylt94/ihome/services/sendSMS/proto/sendSMS"
+	checkSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 )
 
 func main() {

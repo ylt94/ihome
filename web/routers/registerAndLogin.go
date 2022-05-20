@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"ihome/web/controllers"
+	"github.com/ylt94/ihome/web/controllers"
 )
 
 func registerAndLoginRouters(R *gin.RouterGroup) {

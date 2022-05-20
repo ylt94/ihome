@@ -1,9 +1,9 @@
 package main
 
 import (
-	"ihome/services/getCaptcha/handler"
-	getCaptcha "ihome/services/getCaptcha/proto/getCaptcha"
-	checkCaptcha "ihome/services/getCaptcha/proto/checkCaptcha"
+	"github.com/ylt94/ihome/services/getCaptcha/handler"
+	getCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/getCaptcha"
+	checkCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/checkCaptcha"
 	"github.com/micro/go-micro/v2"
 	log "github.com/micro/go-micro/v2/logger"
 )

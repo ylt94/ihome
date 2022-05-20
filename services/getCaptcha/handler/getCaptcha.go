@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"github.com/afocus/captcha"
 	log "github.com/micro/go-micro/v2/logger"
-	"ihome/services/getCaptcha/utils"
+	"github.com/ylt94/ihome/services/getCaptcha/utils"
 	"image/color"
 
-	getCaptcha "ihome/services/getCaptcha/proto/getCaptcha"
+	getCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/getCaptcha"
 )
 
 type GetCaptcha struct{}
