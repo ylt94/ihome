@@ -2,17 +2,16 @@ package handler
 
 import (
 	"context"
-	"crypto/md5"
-	"encoding/hex"
 	"errors"
 	"github.com/micro/go-micro/v2"
 	"github.com/ylt94/ihome/services/registerAndLogin/model"
+	"github.com/ylt94/ihome/services/registerAndLogin/utils"
 	"regexp"
 
 	log "github.com/micro/go-micro/v2/logger"
 
-	register "github.com/ylt94/ihome/services/registerAndLogin/proto/register"
 	checkCaptcha "github.com/ylt94/ihome/services/getCaptcha/proto/checkCaptcha"
+	register "github.com/ylt94/ihome/services/registerAndLogin/proto/register"
 	checkSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 )
 
@@ -54,9 +53,7 @@ func (e *Register) Register(ctx context.Context, req *register.Request, rsp *reg
 	//数据库操作
 	//密码加密 MD5
 	user := &model.User{Mobile: req.Phone, Name: req.Phone}
-	M := md5.New()
-	M.Write([]byte(req.Pwd))
-	user.PasswordHash = hex.EncodeToString(M.Sum(nil))
+	user.PasswordHash = utils.EncryptionByMD5(req.Pwd)
 	user.Register()
 
 	return nil

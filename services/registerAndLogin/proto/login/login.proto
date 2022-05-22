@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package go.micro.service.register;
+
+service Login {
+	rpc Login(Request) returns (Response) {}
+}
+
+enum LoginStatus {
+    Fail  = 0;
+    Success = 1;
+}
+
+message Request {
+	string Phone = 1;
+	string Pwd = 2;
+}
+
+message Response {
+	LoginStatus Status = 1;
+	string Token = 2;
+}
