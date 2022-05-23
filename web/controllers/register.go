@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	register "github.com/ylt94/ihome/services/registerAndLogin/proto/register"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,7 +14,17 @@ import (
 	"image/png"
 	"net/http"
 	"regexp"
+
 )
+
+type registerParams struct {
+	confirmPassword string `json:"confirm_password" binding:"required"`
+	Phone string `json:"mobile" binding:"required"`
+	SMSCode string `json:"sms_code" binding:"required"`
+	Pwd string `json:"password" binding:"required"`
+	Uuid string `json:"uuid" binding:"required"`
+	chaptchaCode string `json:"chaptcha_code" binding:"required"`
+}
 
 //获取图片验证码
 func GetImageCode(ctx *gin.Context) {
@@ -70,5 +81,30 @@ func SendSMS (ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, getReturn(""))
+	return
+}
+
+//注册
+func Register(ctx *gin.Context) {
+	var params registerParams
+
+	//TODO 自定义验证规则--正则验证手机号
+	ctx.ShouldBind(&params)
+
+	req := register.Request{
+		Phone: params.Phone,
+		Pwd: params.Pwd,
+		ConfirmPwd: params.confirmPassword,
+		Uuid: params.Uuid,
+		SMSCode: params.SMSCode,
+		CaptchaCode: params.chaptchaCode,
+	}
+
+	microObj := micro.NewService()
+	client := register.NewRegisterService("go.micro.service.registerAndLogin", microObj.Client())
+	_, err := client.Register(context.TODO(), &req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, getReturn("", utils.RECODE_REGIERR, err.Error()))
+	}
 	return
 }

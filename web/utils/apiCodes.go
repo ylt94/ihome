@@ -24,6 +24,7 @@ const (
 	RECODE_IOERR      = "4302"
 	RECODE_SERVERERR  = "4500"
 	RECODE_UNKNOWERR  = "4501"
+	RECODE_REGIERR  = "4502"
 )
 
 var codesTrans = map[string]string {
@@ -47,6 +48,7 @@ var codesTrans = map[string]string {
 	RECODE_UNKNOWERR:  "未知错误",
 	RECODE_SMSERR:     "短信失败",
 	RECODE_MOBILEERR:  "手机号错误",
+	RECODE_REGIERR:   "注册失败",
 }
 
 func GetCodeTrans(code string)string {

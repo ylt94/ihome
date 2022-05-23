@@ -7,11 +7,14 @@ require (
 	github.com/garyburd/redigo v1.6.3
 	github.com/gin-gonic/gin v1.7.7
 	github.com/micro/go-micro/v2 v2.9.1
-	github.com/ylt94/ihome/services/getCaptcha v0.0.0-00010101000000-000000000000
-	github.com/ylt94/ihome/services/sendSMS v0.0.0-00010101000000-000000000000
+	github.com/ylt94/ihome/services/getCaptcha v0.0.0-20220520162116-f2ea8d2a96ea
+	github.com/ylt94/ihome/services/registerAndLogin v0.0.0-00010101000000-000000000000
+	github.com/ylt94/ihome/services/sendSMS v0.0.0-20220520162116-f2ea8d2a96ea
 	golang.org/x/text v0.3.6 // indirect
 )
 
 replace github.com/ylt94/ihome/services/getCaptcha => ../services/getCaptcha
 
 replace github.com/ylt94/ihome/services/sendSMS => ../services/sendSMS
+
+replace github.com/ylt94/ihome/services/registerAndLogin => ../services/registerAndLogin

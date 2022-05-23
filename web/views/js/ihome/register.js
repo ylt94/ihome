@@ -134,7 +134,8 @@ $(document).ready(function() {
             "password": passwd,
             "sms_code": phoneCode,
             "confirm_password": passwd2,
-            "uuid": imageCodeId
+            "uuid": imageCodeId,
+            "chaptcha_code": imageCodeId
         };
 
         // // 方式二

@@ -4,6 +4,7 @@ package go.micro.service.register;
 
 service Login {
 	rpc Login(Request) returns (Response) {}
+	rpc Auth(Request) returns (Response) {}
 }
 
 enum LoginStatus {

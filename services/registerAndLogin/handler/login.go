@@ -2,8 +2,6 @@ package handler
 
 import (
 	"context"
-	"crypto/md5"
-	"encoding/hex"
 	"errors"
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/ylt94/ihome/services/registerAndLogin/model"
@@ -29,6 +27,11 @@ func (e *Login) Login(ctx context.Context, req *login.Request, rsp *login.Respon
 	}
 	rsp.Token = utils.CreateTokenByJWT(req.Phone)
 	rsp.Status = login.LoginStatus_Success
+
+	return nil
+}
+
+func (e *Login) Auth(ctx context.Context, req *login.Request, rsp *login.Response) error {
 
 	return nil
 }
