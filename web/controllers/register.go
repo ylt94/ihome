@@ -18,12 +18,12 @@ import (
 )
 
 type registerParams struct {
-	confirmPassword string `json:"confirm_password" binding:"required"`
+	ConfirmPassword string `json:"confirm_password" binding:"required"`
 	Phone string `json:"mobile" binding:"required"`
 	SMSCode string `json:"sms_code" binding:"required"`
 	Pwd string `json:"password" binding:"required"`
 	Uuid string `json:"uuid" binding:"required"`
-	chaptchaCode string `json:"chaptcha_code" binding:"required"`
+	ChaptchaCode string `json:"chaptcha_code" binding:"required"`
 }
 
 //获取图片验证码
@@ -94,10 +94,10 @@ func Register(ctx *gin.Context) {
 	req := register.Request{
 		Phone: params.Phone,
 		Pwd: params.Pwd,
-		ConfirmPwd: params.confirmPassword,
+		ConfirmPwd: params.ConfirmPassword,
 		Uuid: params.Uuid,
 		SMSCode: params.SMSCode,
-		CaptchaCode: params.chaptchaCode,
+		CaptchaCode: params.ChaptchaCode,
 	}
 
 	microObj := micro.NewService()

@@ -107,6 +107,7 @@ $(document).ready(function() {
         var phoneCode = $("#phonecode").val();
         var passwd = $("#password").val();
         var passwd2 = $("#password2").val();
+        var imageCode = $("#imagecode").val();
         if (!mobile) {
             $("#mobile-err span").html("请填写正确的手机号！");
             $("#mobile-err").show();
@@ -127,6 +128,12 @@ $(document).ready(function() {
             $("#password2-err").show();
             return;
         }
+        if (!imageCode) {
+            $("#image-code-err span").html("请填写验证码！");
+            $("#image-code-err").show();
+            $(".phonecode-a").attr("onclick", "sendSMSCode();");
+            return;
+        }
 
         // 构造发送到后端的数据 方式一
         var req = {
@@ -135,7 +142,7 @@ $(document).ready(function() {
             "sms_code": phoneCode,
             "confirm_password": passwd2,
             "uuid": imageCodeId,
-            "chaptcha_code": imageCodeId
+            "chaptcha_code": imageCode
         };
 
         // // 方式二

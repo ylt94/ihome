@@ -20,12 +20,7 @@ func (e *CheckCaptcha) Check(Ctx context.Context, req *checkCaptcha.Request, rsp
 	}
 	defer client.Close()
 
-	val, err := client.Do("get", req.Uuid)
-	if err != nil {
-		return err
-	}
-
-	code, err := redis.String(val, err)
+	code, err := redis.String(client.Do("get", req.Uuid))
 	if err != nil {
 		return err
 	}
@@ -38,9 +33,9 @@ func (e *CheckCaptcha) Check(Ctx context.Context, req *checkCaptcha.Request, rsp
 		return errors.New("图形验证码错误!")
 	} else {
 		rsp.Status = checkCaptcha.EheckStatus_Succ
-		client.Do("del", req.Uuid)
+		log.Info("11111")
+		//client.Do("del", req.Uuid)
 		return nil
 	}
-
 	return nil
 }

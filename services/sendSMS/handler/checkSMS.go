@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/ylt94/ihome/services/sendSMS/utils"
 
 	log "github.com/micro/go-micro/v2/logger"
@@ -19,9 +20,8 @@ func (e *CheckSMS) Check(ctx context.Context, req *checkSMS.Request, rsp *checkS
 	defer client.Close()
 
 	key := checkSMS.SMSType_name[int32(checkSMS.SMSType_Register)] + "_" + req.Phone
-	res ,err := client.Do("get", key)
-
-	val, err := client.String(res, err)
+	val ,err := client.Do("get", key)
+	fmt.Println(val, err)
 	if err != nil {
 		return err
 	}

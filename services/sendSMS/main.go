@@ -1,12 +1,12 @@
 package main
 
 import (
-	log "github.com/micro/go-micro/v2/logger"
 	"github.com/micro/go-micro/v2"
-	"github.com/ylt94/ihome/services/sendSMS/handler"
+	log "github.com/micro/go-micro/v2/logger"
+	handler "github.com/ylt94/ihome/services/sendSMS/handler"
+	checkSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 
 	sendSMS "github.com/ylt94/ihome/services/sendSMS/proto/sendSMS"
-	checkSMS "github.com/ylt94/ihome/services/sendSMS/proto/checkSMS"
 )
 
 func main() {
@@ -20,8 +20,8 @@ func main() {
 	//service.Init()
 
 	// Register Handler
-	sendSMS.RegisterSendSMSHandler(service.Server(), new(handler.SendSMS))
 	checkSMS.RegisterCheckSMSHandler(service.Server(), new(handler.CheckSMS))
+	sendSMS.RegisterSendSMSHandler(service.Server(), new(handler.SendSMS))
 
 	// Run service
 	if err := service.Run(); err != nil {

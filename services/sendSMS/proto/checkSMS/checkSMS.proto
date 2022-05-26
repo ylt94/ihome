@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package go.micro.service.sendSMS;
+package go.micro.service.checkSMS;
 
 service CheckSMS {
-	rpc check(Request) returns (Response) {}
+	rpc Check(Request) returns (Response) {}
 }
 
 message Message {

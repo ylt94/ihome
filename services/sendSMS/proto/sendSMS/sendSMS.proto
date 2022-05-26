@@ -3,7 +3,7 @@ syntax = "proto3";
 package go.micro.service.sendSMS;
 
 service SendSMS {
-	rpc send(Request) returns (Response) {}
+	rpc Send(Request) returns (Response) {}
 }
 
 message Message {

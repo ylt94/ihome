@@ -58,7 +58,7 @@ func NewSendSMSService(name string, c client.Client) SendSMSService {
 }
 
 func (c *sendSMSService) Send(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "SendSMS.send", in)
+	req := c.c.NewRequest(c.name, "SendSMS.Send", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
