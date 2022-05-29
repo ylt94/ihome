@@ -16,9 +16,12 @@ func (e *Login) Login(ctx context.Context, req *login.Request, rsp *login.Respon
 	log.Info("Received RegisterAndLogin.Call request")
 	rsp.Status = login.LoginStatus_Fail
 	user := &model.User{}
-	user, err := user.GetUserByPhone(req.Phone)
+	err := user.GetUserByPhone(req.Phone)
 	if err != nil {
 		return err
+	}
+	if user.Id == 0 {
+		return errors.New("用户不存在")
 	}
 
 	md5Pwd := utils.EncryptionByMD5(req.Pwd)

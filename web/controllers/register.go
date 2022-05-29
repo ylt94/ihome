@@ -105,6 +105,8 @@ func Register(ctx *gin.Context) {
 	_, err := client.Register(context.TODO(), &req)
 	if err != nil {
 		ctx.JSON(http.StatusOK, getReturn("", utils.RECODE_REGIERR, err.Error()))
+		return
 	}
+	ctx.JSON(http.StatusOK, getReturn(""))
 	return
 }

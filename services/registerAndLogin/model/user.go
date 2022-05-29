@@ -17,15 +17,12 @@ func (u *User) Register() {
 	db.Create(u)
 }
 
-func (u *User) GetUserByPhone(phone string) (*User, error) {
+func (u *User) GetUserByPhone(phone string) error {
 	if phone == "" {
-		return nil, errors.New("请输入手机号!")
+		return errors.New("请输入手机号!")
 	}
 
 	db:= Db()
 	db.Where("mobile = ? ", phone).First(u)
-	if u.Id == 0 {
-		return nil, errors.New("手机号未注册!")
-	}
-	return u, nil
+	return nil
 }
