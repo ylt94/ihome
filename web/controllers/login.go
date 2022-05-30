@@ -21,7 +21,7 @@ func Login(ctx *gin.Context) {
 
 	microObj := micro.NewService()
 	client := login.NewLoginService(config.REGISTER_AND_LOGIN, microObj.Client())
-	resp, err := client.Login(context.TODO(), &login.Request{Pwd: params.Pwd, Phone: params.Phone})
+	resp, err := client.Login(context.TODO(), &login.LoginRequest{Pwd: params.Pwd, Phone: params.Phone})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_LOGINERR, msg.Detail))

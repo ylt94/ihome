@@ -43,7 +43,7 @@ func AuthUserInfo() gin.HandlerFunc{
 			ctx.JSON(http.StatusOK, controllers.GetReturn("", utils.RECODE_SESSIONERR, msg.Detail))
 			return
 		}
-		ctx.Set("user_info", rsp.User)
+		ctx.Set("user_info", rsp.GetUser())
 		ctx.Next()
 	}
 }

@@ -5,16 +5,15 @@ import (
 	"errors"
 	log "github.com/micro/go-micro/v2/logger"
 	"github.com/ylt94/ihome/services/registerAndLogin/model"
-	"github.com/ylt94/ihome/services/registerAndLogin/utils"
-
 	login "github.com/ylt94/ihome/services/registerAndLogin/proto/login"
+	"github.com/ylt94/ihome/services/registerAndLogin/utils"
 )
 
 type Login struct{}
 
-func (e *Login) Login(ctx context.Context, req *login.Request, rsp *login.Response) error {
+func (e *Login) Login(ctx context.Context, req *login.LoginRequest, rsp *login.LoginResponse) error {
 	log.Info("Received RegisterAndLogin.Call request")
-	rsp.Status = login.LoginStatus_Fail
+	rsp.LoginStatus = login.LoginStatus_LoginFail
 	user := &model.User{}
 	err := user.GetUserByPhone(req.Phone)
 	if err != nil {
@@ -29,7 +28,7 @@ func (e *Login) Login(ctx context.Context, req *login.Request, rsp *login.Respon
 		return errors.New("密码错误!")
 	}
 	rsp.Token = utils.CreateTokenByJWT(req.Phone)
-	rsp.Status = login.LoginStatus_Success
+	rsp.LoginStatus = login.LoginStatus_LoginSuccess
 
 	return nil
 }
@@ -40,13 +39,11 @@ func (e *Login) Auth(ctx context.Context, req *login.AuthRequest, rsp *login.Aut
 	user := &model.User{}
 	user.GetUserByPhone(phone)
 
-	rsp.Status = login.AuthStatus_AuthFail
+	rsp.AuthStatus = login.AuthStatus_AuthFail
 	if user.Id > 0 {
-		rsp.Status = login.AuthStatus_AuthSuccess
-		rsp.User.Id = int32(user.Id)
-		rsp.User.Name = user.Name
-		rsp.User.Mobile = user.Mobile
-		rsp.User.AvatarUrl = user.AvatarUrl
+		rsp.AuthStatus = login.AuthStatus_AuthSuccess
+		userInfo := &login.UserInfo{Id: int32(user.Id), Name: user.Name, Mobile: user.Mobile, AvatarUrl: user.AvatarUrl}
+		rsp.User = userInfo
 		return nil
 	}
 

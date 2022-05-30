@@ -3,15 +3,15 @@ syntax = "proto3";
 package go.micro.service.register;
 
 service Register {
-	rpc Register(Request) returns (Response) {}
+	rpc Register(RegisterRequest) returns (RegisterResponse) {}
 }
 
 enum RegisterStatus {
-    Fail  = 0;
-    Success = 1;
+    RegisterFail  = 0;
+    RegisterSuccess = 1;
 }
 
-message Request {
+message RegisterRequest {
 	string CaptchaCode = 1;
 	string Phone = 2;
 	string Pwd = 3;
@@ -20,6 +20,6 @@ message Request {
 	string SMSCode = 6;
 }
 
-message Response {
-	RegisterStatus Status = 1;
+message RegisterResponse {
+	RegisterStatus RegisterStatus = 1;
 }

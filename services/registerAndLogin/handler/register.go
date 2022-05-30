@@ -18,9 +18,9 @@ import (
 type Register struct{}
 
 // Call is a single request handler called via client.Call or the generated client code
-func (e *Register) Register(ctx context.Context, req *register.Request, rsp *register.Response) error {
+func (e *Register) Register(ctx context.Context, req *register.RegisterRequest, rsp *register.RegisterResponse) error {
 	log.Info("Received RegisterAndLogin.Call request")
-	rsp.Status = register.RegisterStatus_Fail
+	rsp.RegisterStatus = register.RegisterStatus_RegisterFail
 
 	if req.ConfirmPwd != req.Pwd {
 		return errors.New("两次输入的密码不一致!")
@@ -38,7 +38,7 @@ func (e *Register) Register(ctx context.Context, req *register.Request, rsp *reg
 	captchaClient := checkCaptcha.NewCheckCaptchaService("go.micro.service.getCaptcha", captchaMicroObj.Client())
 	_, err := captchaClient.Check(ctx, &checkCaptcha.Request{Number: req.CaptchaCode, Uuid: req.Uuid})
 	if err != nil {
-		rsp.Status = register.RegisterStatus_Fail
+		rsp.RegisterStatus = register.RegisterStatus_RegisterSuccess
 		return err
 	}
 

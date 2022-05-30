@@ -42,7 +42,7 @@ func NewLoginEndpoints() []*api.Endpoint {
 // Client API for Login service
 
 type LoginService interface {
-	Login(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	Auth(ctx context.Context, in *AuthRequest, opts ...client.CallOption) (*AuthResponse, error)
 }
 
@@ -58,9 +58,9 @@ func NewLoginService(name string, c client.Client) LoginService {
 	}
 }
 
-func (c *loginService) Login(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+func (c *loginService) Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error) {
 	req := c.c.NewRequest(c.name, "Login.Login", in)
-	out := new(Response)
+	out := new(LoginResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -81,13 +81,13 @@ func (c *loginService) Auth(ctx context.Context, in *AuthRequest, opts ...client
 // Server API for Login service
 
 type LoginHandler interface {
-	Login(context.Context, *Request, *Response) error
+	Login(context.Context, *LoginRequest, *LoginResponse) error
 	Auth(context.Context, *AuthRequest, *AuthResponse) error
 }
 
 func RegisterLoginHandler(s server.Server, hdlr LoginHandler, opts ...server.HandlerOption) error {
 	type login interface {
-		Login(ctx context.Context, in *Request, out *Response) error
+		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
 		Auth(ctx context.Context, in *AuthRequest, out *AuthResponse) error
 	}
 	type Login struct {
@@ -101,7 +101,7 @@ type loginHandler struct {
 	LoginHandler
 }
 
-func (h *loginHandler) Login(ctx context.Context, in *Request, out *Response) error {
+func (h *loginHandler) Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error {
 	return h.LoginHandler.Login(ctx, in, out)
 }
 

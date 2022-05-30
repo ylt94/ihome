@@ -3,22 +3,22 @@ syntax = "proto3";
 package go.micro.service.register;
 
 service Login {
-	rpc Login(Request) returns (Response) {}
+	rpc Login(LoginRequest) returns (LoginResponse) {}
 	rpc Auth(AuthRequest) returns (AuthResponse) {}
 }
 
 enum LoginStatus {
-    Fail  = 0;
-    Success = 1;
+    LoginFail  = 0;
+    LoginSuccess = 1;
 }
 
-message Request {
+message LoginRequest {
 	string Phone = 1;
 	string Pwd = 2;
 }
 
-message Response {
-	LoginStatus Status = 1;
+message LoginResponse {
+	LoginStatus LoginStatus = 1;
 	string Token = 2;
 }
 
@@ -39,6 +39,6 @@ message UserInfo {
 }
 
 message AuthResponse {
-	AuthStatus Status = 1;
+	AuthStatus AuthStatus = 1;
 	UserInfo User = 2;
 }

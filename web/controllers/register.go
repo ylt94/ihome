@@ -94,7 +94,7 @@ func Register(ctx *gin.Context) {
 	//TODO 自定义验证规则--正则验证手机号
 	ctx.ShouldBind(&params)
 
-	req := register.Request{
+	req := register.RegisterRequest{
 		Phone: params.Phone,
 		Pwd: params.Pwd,
 		ConfirmPwd: params.ConfirmPassword,

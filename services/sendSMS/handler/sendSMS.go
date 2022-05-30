@@ -33,7 +33,6 @@ func (e *SendSMS) Send(ctx context.Context, req *sendSMS.Request, rsp *sendSMS.R
 
 	rsp.Phone = req.Phone
 	codeInt, err := strconv.ParseInt(code, 10, 32)
-
 	if err != nil {
 		return  err
 	}

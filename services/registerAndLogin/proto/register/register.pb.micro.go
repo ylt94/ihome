@@ -42,7 +42,7 @@ func NewRegisterEndpoints() []*api.Endpoint {
 // Client API for Register service
 
 type RegisterService interface {
-	Register(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...client.CallOption) (*RegisterResponse, error)
 }
 
 type registerService struct {
@@ -57,9 +57,9 @@ func NewRegisterService(name string, c client.Client) RegisterService {
 	}
 }
 
-func (c *registerService) Register(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+func (c *registerService) Register(ctx context.Context, in *RegisterRequest, opts ...client.CallOption) (*RegisterResponse, error) {
 	req := c.c.NewRequest(c.name, "Register.Register", in)
-	out := new(Response)
+	out := new(RegisterResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,12 +70,12 @@ func (c *registerService) Register(ctx context.Context, in *Request, opts ...cli
 // Server API for Register service
 
 type RegisterHandler interface {
-	Register(context.Context, *Request, *Response) error
+	Register(context.Context, *RegisterRequest, *RegisterResponse) error
 }
 
 func RegisterRegisterHandler(s server.Server, hdlr RegisterHandler, opts ...server.HandlerOption) error {
 	type register interface {
-		Register(ctx context.Context, in *Request, out *Response) error
+		Register(ctx context.Context, in *RegisterRequest, out *RegisterResponse) error
 	}
 	type Register struct {
 		register
@@ -88,6 +88,6 @@ type registerHandler struct {
 	RegisterHandler
 }
 
-func (h *registerHandler) Register(ctx context.Context, in *Request, out *Response) error {
+func (h *registerHandler) Register(ctx context.Context, in *RegisterRequest, out *RegisterResponse) error {
 	return h.RegisterHandler.Register(ctx, in, out)
 }
