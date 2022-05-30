@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2"
 	login "github.com/ylt94/ihome/services/registerAndLogin/proto/login"
+	"github.com/ylt94/ihome/web/config"
 	"github.com/ylt94/ihome/web/utils"
 	"net/http"
 )
@@ -20,13 +20,17 @@ func Login(ctx *gin.Context) {
 	ctx.ShouldBind(&params)
 
 	microObj := micro.NewService()
-	client := login.NewLoginService("go.micro.service.registerAndLogin", microObj.Client())
+	client := login.NewLoginService(config.REGISTER_AND_LOGIN, microObj.Client())
 	resp, err := client.Login(context.TODO(), &login.Request{Pwd: params.Pwd, Phone: params.Phone})
 	if err != nil {
-		ctx.JSON(http.StatusOK, getReturn("", utils.RECODE_LOGINERR, err.Error()))
+		msg := GetServiceError(err.Error())
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_LOGINERR, msg.Detail))
 		return
 	}
 	token := resp.Token
-	fmt.Println(token)
+
 	//TODO session-cookie-token
+	ctx.SetCookie("user_cookie", token, 0, "", "", true, true)
+	ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_OK, "登录成功!"))
+	return
 }

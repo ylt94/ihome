@@ -12,7 +12,7 @@ type microResult struct{
 	Status string `json:"status"`
 }
 
-func getReturn(data interface{}, inputCode ...string) map[string]interface{} {
+func GetReturn(data interface{}, inputCode ...string) map[string]interface{} {
 	res := make(map[string]interface{}, 3)
 	code :=  utils.RECODE_OK
 	errmsg := ""
@@ -21,12 +21,7 @@ func getReturn(data interface{}, inputCode ...string) map[string]interface{} {
 		code = inputCode[0]
 	}
 	if len(inputCode) >= 2 {
-		microRes := &microResult{}
-		err := json.Unmarshal([]byte(inputCode[1]), microRes)
-		if err != nil {
-			panic(err.Error())
-		}
-		errmsg = microRes.Detail
+		errmsg = inputCode[1]
 	}
 
 	res["errno"] = code
@@ -34,4 +29,13 @@ func getReturn(data interface{}, inputCode ...string) map[string]interface{} {
 	res["data"] = data
 
 	return res
+}
+
+func GetServiceError(msg string) *microResult {
+	microRes := &microResult{}
+	err := json.Unmarshal([]byte(msg), microRes)
+	if err != nil {
+		panic(err.Error())
+	}
+	return microRes
 }

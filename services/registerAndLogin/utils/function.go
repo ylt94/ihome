@@ -13,5 +13,9 @@ func EncryptionByMD5(str string) string {
 
 func CreateTokenByJWT(phone string) string {
 	//TODO JWT 生成登录TOKEN
-	return ""
+	return phone
+}
+
+func DecryptionTokenByJWT(token string) string {
+	return token
 }

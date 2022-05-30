@@ -34,7 +34,21 @@ func (e *Login) Login(ctx context.Context, req *login.Request, rsp *login.Respon
 	return nil
 }
 
-func (e *Login) Auth(ctx context.Context, req *login.Request, rsp *login.Response) error {
+func (e *Login) Auth(ctx context.Context, req *login.AuthRequest, rsp *login.AuthResponse) error {
+	token := req.Token
+	phone := utils.DecryptionTokenByJWT(token)
+	user := &model.User{}
+	user.GetUserByPhone(phone)
 
-	return nil
+	rsp.Status = login.AuthStatus_AuthFail
+	if user.Id > 0 {
+		rsp.Status = login.AuthStatus_AuthSuccess
+		rsp.User.Id = int32(user.Id)
+		rsp.User.Name = user.Name
+		rsp.User.Mobile = user.Mobile
+		rsp.User.AvatarUrl = user.AvatarUrl
+		return nil
+	}
+
+	return errors.New("身份验证失败!")
 }
