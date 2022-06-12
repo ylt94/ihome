@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package go.micro.service.user;
+
+service User {
+	rpc Info(Request) returns (Response) {}
+	rpc UploadAvatar(AvatarRequest) returns (AvatarResponse) {}
+	rpc UpdateName(UpNameRequest) returns (UpNameResponse) {}
+}
+
+message InfoRequest {
+	int32 UserId = 1;
+}
+
+message InfoResponse {
+	int32 UserId = 1;
+    string Name = 2;
+    string Mobile = 3;
+    string RealName = 4;
+    string IdCard = 5;
+    string AvatarUrl = 6;
+}
+
+message AvatarRequest {
+    int32 UserId = 1;
+    string AvatarUrl = 2;
+}
+
+enum AvatarStatus {
+    Fail = 0;
+    Succ = 1;
+}
+message AvatarResponse {
+    AvatarStatus Status = 1;
+    string AvatarUrl = 2;
+}
+
+message UpNameRequest {
+    int32 UserId = 1;
+    string Name = 2;
+}
+
+enum UpNameStatus {
+    Fail = 0;
+    Succ = 1;
+}
+message UpNameResponse {
+    UpNameRequest Status = 1;
+    string Name = 2;
+}

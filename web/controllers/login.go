@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2"
 	login "github.com/ylt94/ihome/services/registerAndLogin/proto/login"
@@ -24,6 +25,7 @@ func Login(ctx *gin.Context) {
 	resp, err := client.Login(context.TODO(), &login.LoginRequest{Pwd: params.Pwd, Phone: params.Phone})
 	if err != nil {
 		msg := GetServiceError(err.Error())
+		fmt.Println(11111)
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_LOGINERR, msg.Detail))
 		return
 	}

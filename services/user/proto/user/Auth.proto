@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package go.micro.service.user;
+
+service User {
+	rpc CheckRealNameAuth(Request) returns (Response) {}
+	rpc RealNameAuth(AuthRequest) returns (AuthRequest) {}
+}
+
+message Request {
+	int32 UserId = 1;
+}
+
+message Response {
+	int32 UserId = 1;
+    string Name = 2;
+    string Mobile = 3;
+    string RealName = 4;
+    string IdCard = 5;
+    string AvatarUrl = 6;
+}
+
+message AuthRequest {
+    int32 UserId = 1;
+    string RealName = 2;
+    string IdCard = 3;
+}
+
+enum AuthStatus {
+    Fail = 0;
+    Succ = 1;
+}
+
+message AuthRequest {
+    AuthStatus Status = 1;
+}

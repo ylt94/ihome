@@ -11,6 +11,13 @@ import (
 	"net/http"
 )
 
+type User struct{
+	Id int `json:"user_id"`
+	Name string `json:"name"`
+	Mobile string `json:"mobile"`
+	Avatar_url string `json:"avatar_url"`
+}
+
 func LoadRouters(R *gin.Engine) *gin.Engine{
 	staticRoutes(R)
 	api := R.Group("api/v1.0")
@@ -43,7 +50,9 @@ func AuthUserInfo() gin.HandlerFunc{
 			ctx.JSON(http.StatusOK, controllers.GetReturn("", utils.RECODE_SESSIONERR, msg.Detail))
 			return
 		}
-		ctx.Set("user_info", rsp.GetUser())
+		user := rsp.GetUser()
+		userInfo := User{Id:int(user.Id), Name: user.Name, Mobile: user.Mobile, Avatar_url: user.AvatarUrl}
+		ctx.Set("user_info", userInfo)
 		ctx.Next()
 	}
 }
