@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package go.micro.service.index;
+
+service Index {
+	rpc Area(AreaRequest) returns (AreaResponse) {}
+	rpc Banner(BannerRequest) returns (BannerResponse) {}
+}
+
+message AreaItem{
+    uint64 Id = 1;
+    string Name = 2;
+}
+
+message AreaRequest {
+}
+
+message AreaResponse {
+	repeated AreaItem Areas = 1;
+}
+
+message House {
+    uint32 HouseId  = 1;
+    string Title = 2;
+    string Price = 3;
+    string AreaName = 4;
+    string ImageUrl = 5;
+    uint32 RoomCount = 6;
+    uint32 OrderCount = 7;
+    string Address = 8;
+    string UserAvatar = 9;
+    string Ctime = 10;
+}
+
+message BannerRequest {
+}
+
+message BannerResponse {
+    repeated House Houses = 1;
+}
