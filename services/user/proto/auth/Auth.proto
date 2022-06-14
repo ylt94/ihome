@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package go.micro.service.user;
+package go.micro.service.auth;
 
-service User {
-	rpc CheckRealNameAuth(Request) returns (Response) {}
+service Auth {
+	rpc CheckRealNameAuth(CheckAuthRequest) returns (CheckAuthResponse) {}
 	rpc RealNameAuth(AuthRequest) returns (AuthRequest) {}
 }
 
-message Request {
-	int32 UserId = 1;
+message CheckAuthRequest {
+	uint64 UserId = 1;
 }
 
-message Response {
-	int32 UserId = 1;
+message CheckAuthResponse {
+	uint64 UserId = 1;
     string Name = 2;
     string Mobile = 3;
     string RealName = 4;
@@ -21,16 +21,16 @@ message Response {
 }
 
 message AuthRequest {
-    int32 UserId = 1;
+    uint64 UserId = 1;
     string RealName = 2;
     string IdCard = 3;
 }
 
 enum AuthStatus {
-    Fail = 0;
-    Succ = 1;
+    AuthFail = 0;
+    AuthSucc = 1;
 }
 
-message AuthRequest {
+message AuthResponse {
     AuthStatus Status = 1;
 }
