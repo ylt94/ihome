@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package go.micro.service.house;
+
+service House {
+	rpc List(ListRequest) returns (ListResponse) {}
+
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+
+	rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
+
+	rpc Detail(DetailRequest) returns (DetailResponse) {}
+}
+
+message ListRequest {
+    uint64 aid = 1;
+    string start_date = 2;
+    string end_date = 3;
+    uint32 page = 4;
+
+}
+
+
+message ListItem {
+    string address = 1;
+    string area_name = 2;
+    string ctime = 3;
+    uint64 house_id = 4;
+    string image_url = 5;
+    uint64 order_count = 6;
+    uint64 price = 7;
+    uint64 room_count = 8;
+    string title = 9;
+    string user_avatar = 10;
+}
+
+message ListResponse {
+    uint32 current_page = 1;
+	repeated ListItem houses = 2;
+	uint32 total_page = 3;
+}
+
+
+message CreateRequest {
+    string title = 1;
+    uint64 price = 2;
+    uint64 area_id = 3;
+    string address = 4;
+    uint64 room_count = 5;
+    uint64 acreage = 6;
+    string unit = 7;
+    uint64 capacity = 8;
+    string beds = 9;
+    uint64 deposit = 10;
+    uint64 min_days = 11;
+    uint64 max_days = 12;
+    bytes  facility = 13;
+}
+
+
+message CreateResponse {
+	uint64 house_id = 1;
+}
+
+message UploadImageRequest {
+    string url = 1;
+}
+
+message UploadImageResponse {
+    string url = 1;
+}
+
+message Comment {
+    string comment = 1;
+    string ctime = 2;
+    string user_name = 3;
+}
+
+message DetailRequest {
+    string house_id = 1;
+}
+
+message DetailResponse {
+    uint64 acreage = 1;
+    string address = 2;
+    string beds = 3;
+    uint64 capacity = 4;
+    repeated Comment comments = 5;
+    uint64 deposit = 6;
+    bytes facilities = 7;
+    uint64 hid = 8;
+    bytes img_urls = 9;
+    uint64 min_days = 10;
+    uint64 max_days = 11;
+    uint64 price = 12;
+    uint64 room_count = 13;
+    string title = 14;
+    string unit = 15;
+    string user_avatar = 16;
+    uint64 user_id = 17;
+    string user_name = 18;
+}

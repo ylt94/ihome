@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package go.micro.service.order;
+
+service Order {
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+	rpc List(ListRequest) returns (ListResponse) {}
+	rpc UpdateStatus(StatusRequest) returns (StatusResponse) {}
+	rpc Comment(CommentRequest) returns (CommentResponse) {}
+}
+
+message CreateRequest {
+	uint64 house_id = 1;
+	string start_date = 2;
+	string end_date = 3;
+}
+
+message CreateResponse {
+	uint64 order_id = 1;
+}
+
+message ListItem {
+    uint64 amount = 1;
+    string comment = 2;
+    string ctime = 3;
+    uint64 days = 4;
+    string end_date = 5;
+    string img_url = 6;
+    uint64 order_id = 7;
+    string start_date = 8;
+    string status = 9;
+    string title = 10;
+}
+
+message ListRequest {
+    string role = 1;
+    uint64 user_id = 2;
+}
+
+message ListResponse{
+    repeated ListItem orders = 1;
+}
+
+enum OrderStatus {
+    WAIT = 0;
+    ACCEPT = 1;
+    REJECT = 2;
+}
+
+message StatusRequest {
+    OrderStatus status = 1;
+}
+
+message StatusResponse {
+}
+
+message CommentRequest {
+    uint64 order_id = 1;
+    string comment = 2;
+}
+
+message CommentResponse {
+}
+
