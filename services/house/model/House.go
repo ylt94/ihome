@@ -24,8 +24,18 @@ type House struct {
 	Orders          []*OrderHouse    `json:"orders"`                        //房屋的订单    与房屋表进行管理
 }
 
-func(e *House) getList(data *[]House, where map[string]interface{}) *[]House{
+func(e *House) getList(data *[]House, where map[string]WhereItem, fields string, page int, limit int) (*[]House, uint64,uint64){
 	db := Db()
-	db.Find(data)
-	return data
+	query := db.Model(e)
+
+	query = getWhere(query, where)
+	countQuery := query
+
+	var count int64
+	countQuery.Count(&count)
+
+	offset := (page-1)*limit
+	query.Select(fields).Limit(limit).Offset(offset).Find(data)
+
+	return data, uint64(page), uint64(count)
 }

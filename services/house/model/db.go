@@ -6,6 +6,11 @@ import (
 	"gorm.io/gorm/schema"
 )
 
+type  WhereItem struct {
+	Condition string
+	Val interface{}
+}
+
 var Conn *gorm.DB
 
 func Db() *gorm.DB {
@@ -19,4 +24,14 @@ func Db() *gorm.DB {
 	}
 	Conn = db
 	return Conn
+}
+
+
+func getWhere(query *gorm.DB, where map[string]WhereItem) *gorm.DB {
+	for c,_ := range where {
+		v := where[c]
+		whereStr := c+" "+v.Condition + " ?"
+		query.Where(whereStr, v.Val)
+	}
+	return query
 }
