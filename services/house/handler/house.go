@@ -37,12 +37,23 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	rsp.CurrentPage = page
 	rsp.TotalPage = uint32(count)
 
-	areaIds := make([]uint32, 0, 10)
-	userIds := make([]uint32, 0, 10)
+	areaIds := make([]uint32, 0, offset)
+	userIds := make([]uint32, 0, offset)
 	for k, _ := range mainData {
 		areaIds = append(areaIds, mainData[k].AreaId)
 		userIds = append(userIds, mainData[k].UserId)
 	}
+
+	//获取用户信息
+	userData := make([]model.User, 0, offset)
+	(&model.User{}).GetUserByIds(userData, userIds, "id, user_avatar")
+
+	userMapData := make([uint32]string, offset)
+	for k, _ := range userData {
+		userMapData[userData[k].Id] = userData[k].AvatarUrl
+	}
+
+	//获取地区信息
 
 	return nil
 }
