@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"sync"
 	"context"
 	"errors"
 
@@ -117,45 +118,68 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 		return errors.New("房屋信息不存在或已被删除!")
 	}
 
+	//协程获取
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+
 	//查询图片信息
-	cap := 10
-	imgData := make([]model.HouseImage, 0, cap)
-	new(model.HouseImage).GetDataByHouseIds(&imgData, []uint32{houseId}, "house_id,url")
-	images := make([]string, 0, cap)
-	for _, v := range imgData {
-		images = append(images, v.Url)
-	}
+	go iamges := func() []string{
+		defer wg.Done()
+		cap := 10
+		imgData := make([]model.HouseImage, 0, cap)
+		new(model.HouseImage).GetDataByHouseIds(&imgData, []uint32{houseId}, "house_id,url")
+		images := make([]string, 0, cap)
+		for _, v := range imgData {
+			images = append(images, v.Url)
+		}
+		return images
+	}()
+	
 
 	//获取标签信息
-	cap = 25
-	facilityData := make([]struct{ Name string }, 0, cap)
-	new(model.HouseFacility).GetHouseDataByHouseIds(facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
-	facilitys := make([]string, 0, cap)
-	for _, v := range facilityData {
-		facilitys = append(facilitys, v.Name)
-	}
+	go facilitys := func() []string{
+		defer wg.Done()
+		cap = 25
+		facilityData := make([]struct{ Name string }, 0, cap)
+		new(model.HouseFacility).GetHouseDataByHouseIds(facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
+		facilitys := make([]string, 0, cap)
+		for _, v := range facilityData {
+			facilitys = append(facilitys, v.Name)
+		}
+		return facilitys
+	}()
 
 	//获取订单评论
-	var limit uint32 = 25
-	orderData := make([]struct {
-		Name      string
-		Comment   string
-		CreatedAt string
-	}, 0, limit)
-	new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
-	comments := make([]*house.Comment, 0, limit)
-	for k, _ := range orderData {
-		comment := house.Comment{
-			UserName: orderData[k].Name,
-			Comment:  orderData[k].Comment,
-			Ctime:    orderData[k].CreatedAt,
+	go comments := func() []*house.Comment{
+		defer wg.Done()
+		var limit uint32 = 25
+		orderData := make([]struct {
+			Name      string
+			Comment   string
+			CreatedAt string
+		}, 0, limit)
+		new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
+		comments := make([]*house.Comment, 0, limit)
+		for k, _ := range orderData {
+			comment := house.Comment{
+				UserName: orderData[k].Name,
+				Comment:  orderData[k].Comment,
+				Ctime:    orderData[k].CreatedAt,
+			}
+			comments = append(comments, &comment)
 		}
-		comments = append(comments, &comment)
-	}
+		return commnets
+	}()
+	
 
 	//获取用户信息
-	user := new(model.User)
-	user.GetUserById(houses.UserId, "user_id, name, avatar_url")
+	go user := func() *model.User{
+		defer wg.Done()
+		user := new(model.User)
+		user.GetUserById(houses.UserId, "user_id, name, avatar_url")
+		return user
+	}
+	wg.Wait()
 
 	//组装返回信息
 	rsp.Acreage = houses.Acreage
