@@ -59,20 +59,24 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	}
 
 	userIds := make([]uint32, 0, offset)
-	houseIds := make([]uint32, 0, offset)
 	for k, _ := range mainData {
 		userIds = append(userIds, mainData[k].UserId)
-		houseIds = append(houseIds, mainData[k].Id)
 	}
 
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	//获取用户信息
-	userData := make([]model.User, 0, offset)
-	new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
+	go userMapData := func() map[uint32]string {
+		defer wg.Done()
+		userData := make([]model.User, 0, offset)
+		new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
 
-	userMapData := make(map[uint32]string, offset)
-	for k, _ := range userData {
-		userMapData[userData[k].Id] = userData[k].AvatarUrl
-	}
+		userMapData := make(map[uint32]string, offset)
+		for k, _ := range userData {
+			userMapData[userData[k].Id] = userData[k].AvatarUrl
+		}
+		return userMapData
+	}()
 
 	for k, _ := range mainData {
 		item := mainData[k]
