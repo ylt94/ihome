@@ -2,8 +2,8 @@ package model
 
 /* 设施信息 table_name = "facility"*/ //设施信息 需要我们提前手动添加的
 type HouseFacility struct {
-	HouseId      uint32
-	FacilityId   uint32
+	HouseId    uint32
+	FacilityId uint32
 }
 
 type Facility struct {
@@ -11,9 +11,9 @@ type Facility struct {
 	Name string
 }
 
-func (e *HouseFacility) GetHouseDataByHouseIds(datas interface{}, HouseIds []uint32) {
+func (e *HouseFacility) GetHouseDataByHouseIds(datas interface{}, HouseIds []uint32, fields string) {
 	query := Db().Model(e)
 	query.Where("house_id in ?", HouseIds)
-	query.Select("house_facilities.house_id, facility.name")
+	query.Select(fields)
 	query.Joins("left join facility on facility.id = house_facilities.house_id").Find(datas)
 }

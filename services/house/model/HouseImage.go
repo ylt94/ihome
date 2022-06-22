@@ -7,7 +7,7 @@ type HouseImage struct {
 	HouseId uint64 `json:"house_id"`            //图片所属房屋编号
 }
 
-func (e *HouseImage) GetDataByHouseIds(datas *[]HouseImage, HouseIds []uint) {
+func (e *HouseImage) GetDataByHouseIds(datas *[]HouseImage, HouseIds []uint32, fields string) {
 	query := Db().Model(e)
-	query.Where("house_id in ?", HouseIds).Find(datas)
+	query.Select(fields).Where("house_id in ?", HouseIds).Find(datas)
 }

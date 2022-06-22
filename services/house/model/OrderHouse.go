@@ -21,7 +21,12 @@ type OrderHouse struct {
 	Credit      bool      //表示个人征信情况 true表示良好
 }
 
-func (e *OrderHouse) GetDataByHouseIds(datas *[]OrderHouse, HouseIds []uint, fields string) {
+func (e *OrderHouse) GetDataByHouseIds(datas *[]OrderHouse, houseIds []uint32, fields string, limit uint32, order string) {
 	query := Db().Model(e)
-	query.Select(fields).Where("house_id in ?", HouseIds).Find(datas)
+	query.Select(fields).Where("house_id in ?", houseIds).Order(order).Limit(int(limit)).Offset(0).Find(datas)
+}
+
+func (e *OrderHouse) GetCommentsByHouseId(datas interface{}, houseId uint32, fields string, limit uint32, order string) {
+	query := Db().Model(e).Joins("left join user on order_house.user_id = user.id")
+	query.Select(fields).Where("house_id = ?", houseId).Order(order).Limit(int(limit)).Offset(0).Find(datas)
 }

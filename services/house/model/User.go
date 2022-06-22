@@ -14,3 +14,8 @@ func (e *User) GetUserByIds(users *[]User, userIds []uint32, fields string) {
 	db := Db()
 	db.Select(fields).Where("id in ?", userIds).Find(users)
 }
+
+func (e *User) GetUserById(userId uint32, fields string) {
+	db := Db()
+	db.Select(fields).Where("id = ?", userId).First(e)
+}

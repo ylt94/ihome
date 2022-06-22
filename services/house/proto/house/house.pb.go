@@ -5,8 +5,9 @@ package go_micro_service_house
 
 import (
 	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
 	math "math"
+
+	proto "github.com/golang/protobuf/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -557,7 +558,7 @@ func (m *Comment) GetUserName() string {
 }
 
 type DetailRequest struct {
-	HouseId              string   `protobuf:"bytes,1,opt,name=house_id,json=houseId,proto3" json:"house_id,omitempty"`
+	HouseId              uint32   `protobuf:"bytes,1,opt,name=house_id,json=houseId,proto3" json:"house_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -588,11 +589,11 @@ func (m *DetailRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DetailRequest proto.InternalMessageInfo
 
-func (m *DetailRequest) GetHouseId() string {
+func (m *DetailRequest) GetHouseId() uint32 {
 	if m != nil {
 		return m.HouseId
 	}
-	return ""
+	return 0
 }
 
 type DetailResponse struct {
@@ -602,9 +603,9 @@ type DetailResponse struct {
 	Capacity             uint32     `protobuf:"varint,4,opt,name=capacity,proto3" json:"capacity,omitempty"`
 	Comments             []*Comment `protobuf:"bytes,5,rep,name=comments,proto3" json:"comments,omitempty"`
 	Deposit              uint32     `protobuf:"varint,6,opt,name=deposit,proto3" json:"deposit,omitempty"`
-	Facilities           []byte     `protobuf:"bytes,7,opt,name=facilities,proto3" json:"facilities,omitempty"`
+	Facilities           []string   `protobuf:"bytes,7,opt,name=facilities,proto3" json:"facilities,omitempty"`
 	Hid                  uint32     `protobuf:"varint,8,opt,name=hid,proto3" json:"hid,omitempty"`
-	ImgUrls              []byte     `protobuf:"bytes,9,opt,name=img_urls,json=imgUrls,proto3" json:"img_urls,omitempty"`
+	ImgUrls              []string   `protobuf:"bytes,9,opt,name=img_urls,json=imgUrls,proto3" json:"img_urls,omitempty"`
 	MinDays              uint32     `protobuf:"varint,10,opt,name=min_days,json=minDays,proto3" json:"min_days,omitempty"`
 	MaxDays              uint32     `protobuf:"varint,11,opt,name=max_days,json=maxDays,proto3" json:"max_days,omitempty"`
 	Price                uint32     `protobuf:"varint,12,opt,name=price,proto3" json:"price,omitempty"`

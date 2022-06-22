@@ -77,7 +77,7 @@ message Comment {
 }
 
 message DetailRequest {
-    string house_id = 1;
+    uint32 house_id = 1;
 }
 
 message DetailResponse {
@@ -87,9 +87,9 @@ message DetailResponse {
     uint32 capacity = 4;
     repeated Comment comments = 5;
     uint32 deposit = 6;
-    bytes facilities = 7;
+    repeated string facilities = 7;
     uint32 hid = 8;
-    bytes img_urls = 9;
+    repeated string img_urls = 9;
     uint32 min_days = 10;
     uint32 max_days = 11;
     uint32 price = 12;

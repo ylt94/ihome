@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 
 	"github.com/ylt94/ihome/services/house/model"
 
@@ -47,12 +48,14 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	}
 	mainData := make([]list, 0, offset)
 
-
-	houseModel := &model.House{}
+	houseModel := new(model.House)
 	_, count := houseModel.GetList(&mainData, where, fields, int(page), offset)
 
 	rsp.CurrentPage = page
-	rsp.TotalPage = uint32(count)
+	rsp.TotalPage = count
+	if count == 0 {
+		return nil
+	}
 
 	userIds := make([]uint32, 0, offset)
 	houseIds := make([]uint32, 0, offset)
@@ -63,7 +66,7 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 
 	//获取用户信息
 	userData := make([]model.User, 0, offset)
-	(&model.User{}).GetUserByIds(&userData, userIds, "id, user_avatar")
+	new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
 
 	userMapData := make(map[uint32]string, offset)
 	for k, _ := range userData {
@@ -73,16 +76,16 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	for k, _ := range mainData {
 		item := mainData[k]
 		listItem := house.ListItem{
-			Address:item.Address,
-			AreaName:item.AreaName,
-			Ctime:item.CreatedAt,
-			HouseId:item.Id,
-			ImageUrl:item.IndexImageUrl,
-			OrderCount:item.OrderCount,
-			Price:item.Price,
-			RoomCount:item.RoomCount,
-			Title:item.Title,
-			UserAvatar:userMapData[item.Id],
+			Address:    item.Address,
+			AreaName:   item.AreaName,
+			Ctime:      item.CreatedAt,
+			HouseId:    item.Id,
+			ImageUrl:   item.IndexImageUrl,
+			OrderCount: item.OrderCount,
+			Price:      item.Price,
+			RoomCount:  item.RoomCount,
+			Title:      item.Title,
+			UserAvatar: userMapData[item.Id],
 		}
 		rsp.Houses = append(rsp.Houses, &listItem)
 	}
@@ -102,5 +105,77 @@ func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, 
 
 func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house.DetailResponse) error {
 	log.Info("Received House.Detail request")
+	//房屋主信息
+	houseId := req.GetHouseId()
+	if houseId == 0 {
+		return errors.New("缺少参数house_id")
+	}
+
+	houses := model.House{}
+	(&houses).Detail(houseId, "*")
+	if houses.Id == 0 {
+		return errors.New("房屋信息不存在或已被删除!")
+	}
+
+	//查询图片信息
+	cap := 10
+	imgData := make([]model.HouseImage, 0, cap)
+	new(model.HouseImage).GetDataByHouseIds(&imgData, []uint32{houseId}, "house_id,url")
+	images := make([]string, 0, cap)
+	for _, v := range imgData {
+		images = append(images, v.Url)
+	}
+
+	//获取标签信息
+	cap = 25
+	facilityData := make([]struct{ Name string }, 0, cap)
+	new(model.HouseFacility).GetHouseDataByHouseIds(facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
+	facilitys := make([]string, 0, cap)
+	for _, v := range facilityData {
+		facilitys = append(facilitys, v.Name)
+	}
+
+	//获取订单评论
+	var limit uint32 = 25
+	orderData := make([]struct {
+		Name      string
+		Comment   string
+		CreatedAt string
+	}, 0, limit)
+	new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
+	comments := make([]*house.Comment, 0, limit)
+	for k, _ := range orderData {
+		comment := house.Comment{
+			UserName: orderData[k].Name,
+			Comment:  orderData[k].Comment,
+			Ctime:    orderData[k].CreatedAt,
+		}
+		comments = append(comments, &comment)
+	}
+
+	//获取用户信息
+	user := new(model.User)
+	user.GetUserById(houses.UserId, "user_id, name, avatar_url")
+
+	//组装返回信息
+	rsp.Acreage = houses.Acreage
+	rsp.Address = houses.Address
+	rsp.Beds = houses.Beds
+	rsp.Capacity = houses.Capacity
+	rsp.Deposit = houses.Deposit
+	rsp.Hid = houses.Id
+	rsp.MinDays = houses.MinDays
+	rsp.MaxDays = houses.MaxDays
+	rsp.Price = houses.Price
+	rsp.RoomCount = houses.RoomCount
+	rsp.Title = houses.Title
+	rsp.Unit = houses.Unit
+	rsp.UserId = houses.UserId
+	rsp.UserName = user.Name
+	rsp.UserAvatar = user.AvatarUrl
+	rsp.Comments = comments
+	rsp.ImgUrls = images
+	rsp.Facilities = facilitys
+
 	return nil
 }
