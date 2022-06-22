@@ -17,3 +17,12 @@ func (e *HouseFacility) GetHouseDataByHouseIds(datas interface{}, HouseIds []uin
 	query.Select(fields)
 	query.Joins("left join facility on facility.id = house_facilities.house_id").Find(datas)
 }
+
+func (e *HouseFacility) Insert(houseId uint32, facilityIds []uint32) {
+	insertData := make([]HouseFacility, 0, len(facilityIds))
+
+	for _, v := range facilityIds {
+		insertData = append(insertData, HouseFacility{HouseId: houseId, FacilityId: v})
+	}
+	Db().Model(e).Create(&insertData)
+}

@@ -64,7 +64,6 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	}
 
 	//获取用户信息
-	defer wg.Done()
 	userData := make([]model.User, 0, offset)
 	new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
 
@@ -95,11 +94,56 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 
 func (e *House) Create(ctx context.Context, req *house.CreateRequest, rsp *house.CreateResponse) error {
 	log.Info("Received House.Create request")
-	return nil
+	houseModel := new(model.House)
+	houseModel.Title = req.Title
+	houseModel.Price = req.Price
+	houseModel.AreaId = req.AreaId
+	houseModel.Address = req.Address
+	houseModel.RoomCount = req.RoomCount
+	houseModel.Acreage = req.Acreage
+	houseModel.Unit = req.Unit
+	houseModel.Capacity = req.Capacity
+	houseModel.Beds = req.Beds
+	houseModel.Deposit = req.Deposit
+	houseModel.MinDays = req.MinDays
+	houseModel.MaxDays = req.MaxDays
+	houseModel.Create()
+
+	tx := model.Db().Begin()
+	if err := tx.Create(houseModel).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	var houseId uint32
+	rsp.HouseId, houseId = houseModel.Id, houseModel.Id
+	facilityIds := req.Facility
+	insertData := make([]model.HouseFacility, 0, len(facilityIds))
+	for _, v := range facilityIds {
+		insertData = append(insertData, model.HouseFacility{HouseId: houseId, FacilityId: v})
+	}
+
+	if err := tx.Create(insertData).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, rsp *house.UploadImageResponse) error {
 	log.Info("Received House.UploadImage request")
+	houseId := req.HouseId
+	url := req.Url
+	houseModel := new(model.House)
+	houseModel.Detail(houseId, "index_image_url")
+	if len(houseModel.IndexImageUrl) == 0 {
+		houseModel.InsertIndexImage(houseId, map[string]interface{}{"index_image_url" : url})
+	} else {
+		imageModel := new(model.HouseImage)
+		imageModel.InsertImages(houseId, []string{url})
+	}
+	rsp.Url = url
 	return nil
 }
 
@@ -122,62 +166,58 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 	wg.Add(3)
 
 	//查询图片信息
-	go iamges := func() []string{
+	cap := 10
+	images := make([]string, 0, cap)
+	go func(images *[]string, cap int) {
 		defer wg.Done()
-		cap := 10
 		imgData := make([]model.HouseImage, 0, cap)
 		new(model.HouseImage).GetDataByHouseIds(&imgData, []uint32{houseId}, "house_id,url")
-		images := make([]string, 0, cap)
 		for _, v := range imgData {
-			images = append(images, v.Url)
+			*images = append(*images, v.Url)
 		}
-		return images
-	}()
+	}(&images, cap)
 	
 
 	//获取标签信息
-	go facilitys := func() []string{
+	cap = 25
+	facilitys := make([]string, 0, cap)
+	go func(facilitys *[]string, cap int) {
 		defer wg.Done()
-		cap = 25
 		facilityData := make([]struct{ Name string }, 0, cap)
 		new(model.HouseFacility).GetHouseDataByHouseIds(facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
-		facilitys := make([]string, 0, cap)
 		for _, v := range facilityData {
-			facilitys = append(facilitys, v.Name)
+			*facilitys = append(*facilitys, v.Name)
 		}
-		return facilitys
-	}()
+	}(&facilitys, cap)
 
 	//获取订单评论
-	go comments := func() []*house.Comment{
+	var limit uint32 = 25
+	comments := make([]*house.Comment, 0, limit)
+	go func(comments *[]*house.Comment, limit uint32) {
 		defer wg.Done()
-		var limit uint32 = 25
 		orderData := make([]struct {
 			Name      string
 			Comment   string
 			CreatedAt string
 		}, 0, limit)
 		new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
-		comments := make([]*house.Comment, 0, limit)
 		for k, _ := range orderData {
 			comment := house.Comment{
 				UserName: orderData[k].Name,
 				Comment:  orderData[k].Comment,
 				Ctime:    orderData[k].CreatedAt,
 			}
-			comments = append(comments, &comment)
+			*comments = append(*comments, &comment)
 		}
-		return commnets
-	}()
+	}(&comments, limit)
 	
 
 	//获取用户信息
-	go user := func() *model.User{
+	user := new(model.User)
+	go func(user *model.User) {
 		defer wg.Done()
-		user := new(model.User)
 		user.GetUserById(houses.UserId, "user_id, name, avatar_url")
-		return user
-	}
+	}(user)
 	wg.Wait()
 
 	//组装返回信息

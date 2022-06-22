@@ -54,7 +54,7 @@ message CreateRequest {
     uint32 deposit = 10;
     uint32 min_days = 11;
     uint32 max_days = 12;
-    bytes  facility = 13;
+    repeated uint32  facility = 13;
 }
 
 
@@ -63,7 +63,8 @@ message CreateResponse {
 }
 
 message UploadImageRequest {
-    string url = 1;
+    uint32 house_id = 1;
+    string url = 2;
 }
 
 message UploadImageResponse {
