@@ -10,9 +10,10 @@ service Order {
 }
 
 message CreateRequest {
-	uint64 house_id = 1;
+	uint32 house_id = 1;
 	string start_date = 2;
 	string end_date = 3;
+	uint32 user_id = 4;
 }
 
 message CreateResponse {
@@ -20,13 +21,13 @@ message CreateResponse {
 }
 
 message ListItem {
-    uint64 amount = 1;
+    uint32 amount = 1;
     string comment = 2;
     string ctime = 3;
-    uint64 days = 4;
+    uint32 days = 4;
     string end_date = 5;
     string img_url = 6;
-    uint64 order_id = 7;
+    uint32 order_id = 7;
     string start_date = 8;
     string status = 9;
     string title = 10;
@@ -34,7 +35,7 @@ message ListItem {
 
 message ListRequest {
     string role = 1;
-    uint64 user_id = 2;
+    uint32 user_id = 2;
 }
 
 message ListResponse{
@@ -49,14 +50,17 @@ enum OrderStatus {
 
 message StatusRequest {
     OrderStatus status = 1;
+    uint32 user_id = 2;
+    uint32 order_id = 3;
 }
 
 message StatusResponse {
 }
 
 message CommentRequest {
-    uint64 order_id = 1;
-    string comment = 2;
+    uint32 order_id = 1;
+    uint32 user_id = 2;
+    string comment = 3;
 }
 
 message CommentResponse {

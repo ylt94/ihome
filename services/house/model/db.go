@@ -27,8 +27,7 @@ func Db() *gorm.DB {
 }
 
 func getWhere(query *gorm.DB, where map[string]WhereItem) *gorm.DB {
-	for c, _ := range where {
-		v := where[c]
+	for c, v := range where {
 		whereStr := c + " " + v.Condition + " ?"
 		query.Where(whereStr, v.Val)
 	}
