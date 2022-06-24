@@ -10,6 +10,8 @@ service House {
 	rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
 
 	rpc Detail(DetailRequest) returns (DetailResponse) {}
+
+    rpc DataByHouseIds(DataRequest) returns (DataResponse) {}
 }
 
 message ListRequest {
@@ -100,4 +102,35 @@ message DetailResponse {
     string user_avatar = 16;
     uint32 user_id = 17;
     string user_name = 18;
+}
+
+message DataRequest {
+    repeated uint32 house_ids
+}
+
+
+message DataItem {
+    uint32 id = 1;
+    uint32 user_id = 2;
+    uint32 area_id = 3;
+    string title = 4;
+    string address = 5;
+    uint32 room_count = 6;
+    uint32 acreage = 7;
+    uint32 price = 8;
+    string unit = 9;
+    uint32 capacity = 10;
+    string beds = 11;
+    uint32 deposit = 12;
+    uint32 min_days = 13;
+    uint32 max_days = 14;
+    uint32 order_count = 15;
+    string index_image_url = 16;
+    string created_at = 17;
+    string updated_at = 18;
+    string deleted_at = 19;
+}
+
+message DataRequest {
+    repeated DataItem = 1;
 }
