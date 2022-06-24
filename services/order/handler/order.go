@@ -16,11 +16,22 @@ type Order struct{}
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Order) Create(ctx context.Context, req *order.CreateRequest, rsp *order.CreateResponse) error {
 	log.Info("Received Order.create request")
+
+	//查询房屋信息
+	houseModel := new(model.House)
+	where := make(map[string]model.WhereItem, 1)
+	where["id"] = model.WhereItem{Condition: "=", Val: req.HouseId}
+	houseModel.GetOne(where, "*")
+	if houseModel.Id == 0 {
+		return errors.New("房屋信息已不存在或已下架")
+	}
+
 	return nil
 }
 
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Order) List(ctx context.Context, req *order.ListRequest, rsp *order.ListResponse) error {
+	log.Info("Received Order.List request")
 	user_id_key := "user_id"
 	if req.Role == "houser" {
 		user_id_key = "house_user_id"
@@ -28,20 +39,44 @@ func (e *Order) List(ctx context.Context, req *order.ListRequest, rsp *order.Lis
 	where := make(map[string]model.WhereItem, 1)
 	where[user_id_key] = model.WhereItem{Condition: "=", Val: req.UserId}
 
+	//获取订单主数据
 	data := []model.OrderHouse{}
-	fileds := "amount, comment, created_at, days, end_date, id, start_date, status, house_id"
+	fileds := "amount, comment, created_at, days, end_date, id, begin_date, status, house_id"
 	new(model.OrderHouse).List(&data, where, fileds, "id desc", 0, 0)
+	if len(data) == 0 {
+		return nil
+	}
 
-	house_ids := make([]uint32, 0, len(data))
+	houseIds := make([]uint32, 0, len(data))
 	for _, v := range data {
-		house_ids = append(house_ids, v.HouseId)
+		houseIds = append(houseIds, v.HouseId)
 	}
 
 	//请求house 服务获取房屋信息--暂时直接查
-
+	houseWhere := make(map[string]model.WhereItem)
+	houseWhere["id"] = model.WhereItem{Condition: "in", Val: houseIds}
+	houseData := make([]model.House, 0, len(houseIds))
+	new(model.House).GetList(&houseData, houseWhere, "id, index_image_url, title")
+	houseMapData := make(map[uint32]model.House, len(houseData))
+	for _, v := range houseData {
+		houseMapData[v.Id] = model.House{IndexImageUrl: v.IndexImageUrl, Title: v.Title}
+	}
 	//组装返回数据
-
-	log.Info("Received Order.List request")
+	for _, v := range data {
+		item := order.ListItem{
+			Amount:    v.Amount,
+			Comment:   v.Comment,
+			Ctime:     v.CreatedAt,
+			Days:      v.Days,
+			EndDate:   v.EndDate,
+			ImgUrl:    houseMapData[v.HouseId].IndexImageUrl,
+			OrderId:   v.ID,
+			StartDate: v.BeginDate,
+			Status:    v.Status,
+			Title:     houseMapData[v.HouseId].Title,
+		}
+		rsp.Orders = append(rsp.Orders, &item)
+	}
 	return nil
 }
 
