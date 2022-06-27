@@ -17,7 +17,7 @@ message CreateRequest {
 }
 
 message CreateResponse {
-	uint64 order_id = 1;
+	uint32 order_id = 1;
 }
 
 message ListItem {

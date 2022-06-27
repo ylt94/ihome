@@ -15,14 +15,14 @@ type OrderHouse struct {
 	Amount      uint32 //订单总金额
 	Status      string `gorm:"default:'WAIT_ACCEPT'"` //订单状态
 	Comment     string `gorm:"size:512"`              //订单评论
-	Credit      bool   //表示个人征信情况 true表示良好
+	Credit      int8   //表示个人征信情况 true表示良好
 	HouseUserId uint32
 	CreatedAt   string
 	UpdatedAt   string
 }
 
-func (m *OrderHouse) insert() {
-
+func (m *OrderHouse) Create() {
+	Db().Create(m)
 }
 
 func (m *OrderHouse) Update(where map[string]WhereItem, updateData map[string]interface{}) {

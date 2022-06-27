@@ -3,6 +3,8 @@ package handler
 import (
 	"context"
 	"errors"
+	"math"
+	"time"
 
 	"github.com/ylt94/ihome/services/order/model"
 
@@ -26,6 +28,36 @@ func (e *Order) Create(ctx context.Context, req *order.CreateRequest, rsp *order
 		return errors.New("房屋信息已不存在或已下架")
 	}
 
+	//根据开始时间和结束时间计算天数
+	timeFormat := "2006-01-02 15:03:04"
+	startTime,err := time.ParseInLocation(timeFormat, req.StartDate, time.Local)
+	if err != nil {
+		return err
+	}
+
+	endTime, err := time.ParseInLocation(timeFormat, req.EndDate, time.Local)
+	if err != nil {
+		return err
+	}
+	days := uint32(math.Ceil(startTime.Sub(endTime).Hours()/24))
+
+	OrderModel := model.OrderHouse{
+		UserId: req.UserId,
+		HouseId: houseModel.Id,
+		BeginDate: req.StartDate,
+		EndDate: req.EndDate,
+		Days :days,
+		HousePrice:houseModel.Price,
+		Amount:houseModel.Price*days,
+		Status: order.OrderStatus_WAIT.String(),
+		Credit: 1,
+		HouseUserId:houseModel.UserId,
+	}
+	OrderModel.Create()
+	if OrderModel.ID == 0 {
+		return errors.New("订单创建失败")
+	}
+	rsp.OrderId = OrderModel.ID
 	return nil
 }
 
