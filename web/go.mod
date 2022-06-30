@@ -12,6 +12,7 @@ require (
 	github.com/ylt94/ihome/services/index v0.0.0-20220627153528-98ebfd08d09f
 	github.com/ylt94/ihome/services/registerAndLogin v0.0.0-00010101000000-000000000000
 	github.com/ylt94/ihome/services/sendSMS v0.0.0-20220526174807-23acb797b957
+	github.com/ylt94/ihome/services/user v0.0.0-20220630083056-33f1c50fe656
 	golang.org/x/text v0.3.6 // indirect
 )
 

@@ -441,6 +441,8 @@ github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q
 github.com/ylt94/ihome v0.0.0-20220627153528-98ebfd08d09f h1:5eRlyPGdhTfDfC9902cfDsFPrbs0td0PztZl1jT5nfI=
 github.com/ylt94/ihome/services/index v0.0.0-20220627153528-98ebfd08d09f h1:l/4L6OnKTb2TpELxo6nheHtNdzKu8OHpV2SHlrqrVM0=
 github.com/ylt94/ihome/services/index v0.0.0-20220627153528-98ebfd08d09f/go.mod h1:9D/i1KsAWRtnjzVxlvOrm0SaqAGCHXYdLApM0dE/wkI=
+github.com/ylt94/ihome/services/user v0.0.0-20220630083056-33f1c50fe656 h1:K+Ll1weZONoWs+1KS9UAwvEJ1UXCaQMv6J/oCt9qZfQ=
+github.com/ylt94/ihome/services/user v0.0.0-20220630083056-33f1c50fe656/go.mod h1:iD4xV2qtMGPSF4bw6lvsDHHDWnWCAM7JxMSIVr8EhCw=
 go.etcd.io/bbolt v1.3.4 h1:hi1bXHMVrlQh6WwxAy+qZCV/SYIlqo+Ushwdpa4tAKg=
 go.etcd.io/bbolt v1.3.4/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
 go.opencensus.io v0.20.1/go.mod h1:6WKK9ahsWS3RSO+PY9ZHZUfv2irvY6gN279GOPZjmmk=

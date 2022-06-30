@@ -19,7 +19,7 @@ func Areas(ctx *gin.Context) {
 	rsp, err := indexService.Area(context.TODO(), &index.AreaRequest{})
 	if err != nil {
 		msg := GetServiceError(err.Error())
-		data := GetReturn("", utils.RECODE_UNKNOWERR, "获取地区信息失败:"+msg)
+		data := GetReturn("", utils.RECODE_UNKNOWERR, "获取地区信息失败:"+msg.Detail)
 		ctx.JSON(http.StatusOK, data)
 		return
 	}
@@ -35,7 +35,7 @@ func Banner(ctx *gin.Context) {
 	rsp, err := indexService.Banner(context.TODO(), &index.BannerRequest{})
 	if err != nil {
 		msg := GetServiceError(err.Error())
-		data := GetReturn("", utils.RECODE_UNKNOWERR, "获取首页Banner失败:"+msg)
+		data := GetReturn("", utils.RECODE_UNKNOWERR, "获取首页Banner失败:"+msg.Detail)
 		ctx.JSON(http.StatusOK, data)
 		return
 	}
