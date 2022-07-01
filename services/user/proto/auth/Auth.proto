@@ -4,26 +4,26 @@ package go.micro.service.auth;
 
 service Auth {
 	rpc CheckRealNameAuth(CheckAuthRequest) returns (CheckAuthResponse) {}
-	rpc RealNameAuth(AuthRequest) returns (AuthRequest) {}
+	rpc RealNameAuth(AuthRequest) returns (AuthResponse) {}
 }
 
 message CheckAuthRequest {
-	uint64 UserId = 1;
+	uint32 user_id = 1;
 }
 
 message CheckAuthResponse {
-	uint64 UserId = 1;
-    string Name = 2;
-    string Mobile = 3;
-    string RealName = 4;
-    string IdCard = 5;
-    string AvatarUrl = 6;
+	uint32 user_id = 1;
+    string name = 2;
+    string mobile = 3;
+    string real_name = 4;
+    string id_card = 5;
+    string avatar_url = 6;
 }
 
 message AuthRequest {
-    uint64 UserId = 1;
-    string RealName = 2;
-    string IdCard = 3;
+    uint32 user_id = 1;
+    string real_name = 2;
+    string id_card = 3;
 }
 
 enum AuthStatus {
@@ -32,5 +32,5 @@ enum AuthStatus {
 }
 
 message AuthResponse {
-    AuthStatus Status = 1;
+    AuthStatus status = 1;
 }

@@ -8,33 +8,33 @@ service Index {
 }
 
 message AreaItem{
-    uint64 Id = 1;
-    string Name = 2;
+    uint64 id = 1;
+    string name = 2;
 }
 
 message AreaRequest {
 }
 
 message AreaResponse {
-	repeated AreaItem Areas = 1;
+	repeated AreaItem areas = 1;
 }
 
 message House {
-    uint32 HouseId  = 1;
-    string Title = 2;
-    string Price = 3;
-    string AreaName = 4;
-    string ImageUrl = 5;
-    uint32 RoomCount = 6;
-    uint32 OrderCount = 7;
-    string Address = 8;
-    string UserAvatar = 9;
-    string Ctime = 10;
+    uint32 house_id  = 1;
+    string title = 2;
+    string price = 3;
+    string area_name = 4;
+    string image_url = 5;
+    uint32 room_count = 6;
+    uint32 order_count = 7;
+    string address = 8;
+    string user_avatar = 9;
+    string ctime = 10;
 }
 
 message BannerRequest {
 }
 
 message BannerResponse {
-    repeated House Houses = 1;
+    repeated House houses = 1;
 }

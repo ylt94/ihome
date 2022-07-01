@@ -9,21 +9,21 @@ service User {
 }
 
 message InfoRequest {
-	uint64 UserId = 1;
+	uint32 user_id = 1;
 }
 
 message InfoResponse {
-	uint64 UserId = 1;
-    string Name = 2;
-    string Mobile = 3;
-    string RealName = 4;
-    string IdCard = 5;
-    string AvatarUrl = 6;
+	uint32 user_id = 1;
+    string name = 2;
+    string mobile = 3;
+    string real_name = 4;
+    string id_card = 5;
+    string avatar_url = 6;
 }
 
 message AvatarRequest {
-    uint64 UserId = 1;
-    string AvatarUrl = 2;
+    uint32 user_id = 1;
+    string avatar_url = 2;
 }
 
 enum AvatarStatus {
@@ -31,13 +31,13 @@ enum AvatarStatus {
     AvatarStatusSucc = 1;
 }
 message AvatarResponse {
-    AvatarStatus Status = 1;
-    string AvatarUrl = 2;
+    AvatarStatus status = 1;
+    string avatar_url = 2;
 }
 
 message UpNameRequest {
-    uint64 UserId = 1;
-    string Name = 2;
+    uint32 user_id = 1;
+    string name = 2;
 }
 
 enum UpNameStatus {
@@ -45,6 +45,6 @@ enum UpNameStatus {
     UpNameSucc = 1;
 }
 message UpNameResponse {
-    UpNameRequest Status = 1;
-    string Name = 2;
+    UpNameStatus status = 1;
+    string name = 2;
 }

@@ -14,7 +14,7 @@ import (
 func Areas(ctx *gin.Context) {
 
 	client := micro.NewService()
-	indexService := index.NewIndexService(config.INDEX, client)
+	indexService := index.NewIndexService(config.INDEX, client.Client())
 
 	rsp, err := indexService.Area(context.TODO(), &index.AreaRequest{})
 	if err != nil {
@@ -24,13 +24,13 @@ func Areas(ctx *gin.Context) {
 		return
 	}
 
-	data := ctx.JSON(http.StatusOK, GetReturn(rsp.Areas), utils.RECODE_OK, "成功")
+	ctx.JSON(http.StatusOK, GetReturn(rsp.Areas, utils.RECODE_OK, "成功"))
 	return
 }
 
 func Banner(ctx *gin.Context) {
 	client := micro.NewService()
-	indexService := index.NewIndexService(config.INDEX, client)
+	indexService := index.NewIndexService(config.INDEX, client.Client())
 
 	rsp, err := indexService.Banner(context.TODO(), &index.BannerRequest{})
 	if err != nil {
@@ -40,6 +40,7 @@ func Banner(ctx *gin.Context) {
 		return
 	}
 
-	data := ctx.JSON(http.StatusOK, GetReturn(rsp.Houses), utils.RECODE_OK, "成功")
+	res := struct{Data []*index.House}{Data: rsp.Houses}
+	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
 	return
 }

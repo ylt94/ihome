@@ -43,7 +43,7 @@ func NewAuthEndpoints() []*api.Endpoint {
 
 type AuthService interface {
 	CheckRealNameAuth(ctx context.Context, in *CheckAuthRequest, opts ...client.CallOption) (*CheckAuthResponse, error)
-	RealNameAuth(ctx context.Context, in *AuthRequest, opts ...client.CallOption) (*AuthRequest, error)
+	RealNameAuth(ctx context.Context, in *AuthRequest, opts ...client.CallOption) (*AuthResponse, error)
 }
 
 type authService struct {
@@ -68,9 +68,9 @@ func (c *authService) CheckRealNameAuth(ctx context.Context, in *CheckAuthReques
 	return out, nil
 }
 
-func (c *authService) RealNameAuth(ctx context.Context, in *AuthRequest, opts ...client.CallOption) (*AuthRequest, error) {
+func (c *authService) RealNameAuth(ctx context.Context, in *AuthRequest, opts ...client.CallOption) (*AuthResponse, error) {
 	req := c.c.NewRequest(c.name, "Auth.RealNameAuth", in)
-	out := new(AuthRequest)
+	out := new(AuthResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -82,13 +82,13 @@ func (c *authService) RealNameAuth(ctx context.Context, in *AuthRequest, opts ..
 
 type AuthHandler interface {
 	CheckRealNameAuth(context.Context, *CheckAuthRequest, *CheckAuthResponse) error
-	RealNameAuth(context.Context, *AuthRequest, *AuthRequest) error
+	RealNameAuth(context.Context, *AuthRequest, *AuthResponse) error
 }
 
 func RegisterAuthHandler(s server.Server, hdlr AuthHandler, opts ...server.HandlerOption) error {
 	type auth interface {
 		CheckRealNameAuth(ctx context.Context, in *CheckAuthRequest, out *CheckAuthResponse) error
-		RealNameAuth(ctx context.Context, in *AuthRequest, out *AuthRequest) error
+		RealNameAuth(ctx context.Context, in *AuthRequest, out *AuthResponse) error
 	}
 	type Auth struct {
 		auth
@@ -105,6 +105,6 @@ func (h *authHandler) CheckRealNameAuth(ctx context.Context, in *CheckAuthReques
 	return h.AuthHandler.CheckRealNameAuth(ctx, in, out)
 }
 
-func (h *authHandler) RealNameAuth(ctx context.Context, in *AuthRequest, out *AuthRequest) error {
+func (h *authHandler) RealNameAuth(ctx context.Context, in *AuthRequest, out *AuthResponse) error {
 	return h.AuthHandler.RealNameAuth(ctx, in, out)
 }

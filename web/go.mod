@@ -6,7 +6,6 @@ require (
 	github.com/afocus/captcha v0.0.0-20191010092841-4bd1f21c8868
 	github.com/garyburd/redigo v1.6.3
 	github.com/gin-gonic/gin v1.7.7
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/ylt94/ihome/services/getCaptcha v0.0.0-20220526174807-23acb797b957
 	github.com/ylt94/ihome/services/index v0.0.0-20220627153528-98ebfd08d09f
