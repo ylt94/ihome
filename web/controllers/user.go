@@ -14,7 +14,7 @@ import (
 )
 
 //检查用户实名信息
-func CheckRelaName(ctx *gin.Context) {
+func UserCheckRelaName(ctx *gin.Context) {
 	userInfo, exists := ctx.Get("user_info")
 	if !exists {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
@@ -36,20 +36,31 @@ func CheckRelaName(ctx *gin.Context) {
 }
 
 //实名认证
-func Auth(ctx *gin.Context) {
+func UserAuth(ctx *gin.Context) {
 	userInfo, exists := ctx.Get("user_info")
 	if !exists {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
 
+	realName := ctx.DefaultPostForm("real_name", "")
+	idCard := ctx.DefaultPostForm("id_card", "")
+	if realName == "" || idCard == "" {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "请将信息填写完整"))
+		return
+	}
+
 	client := micro.NewService()
 	authService := auth.NewAuthService(config.USER, client.Client())
 
-	rsp, err := authService.RealNameAuth(context.TODO(), &auth.AuthRequest{})
+	rsp, err := authService.RealNameAuth(context.TODO(), &auth.AuthRequest{UserId: userInfo.Id, RealName: realName, IdCard: idCard})
 	if err != nil {
 		msg := GetServiceError(err.Error())
-		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR, msg.Detail))
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR,  "认证失败:"+msg.Detail))
+		return
+	}
+	if rsp.Status == auth.AuthStatus_AuthFail {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR, "认证失败"))
 		return
 	}
 
@@ -79,7 +90,7 @@ func UserInfo(ctx *gin.Context) {
 }
 
 //更新头像
-func UploadAvatar(ctx *gin.Context) {
+func UploadUserAvatar(ctx *gin.Context) {
 	userInfo ,exists := ctx.Get("user_info")
 	if !exists {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
@@ -94,7 +105,7 @@ func UploadAvatar(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "头像上传失败:"+err.Error()))
 		return
 	}
-	path := "/views/images/" + strconv.Itoa(userId)+"_"+file.Filename
+	path := "/views/images/" +"user_avatar_"+strconv.Itoa(userId)+"_"+file.Filename
 	err = ctx.SaveUploadedFile(file, "."+path)
 	if err != nil {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_IOERR, "头像保存失败"))

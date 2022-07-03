@@ -11,7 +11,7 @@ import (
 	"github.com/ylt94/ihome/web/utils"
 )
 
-func Areas(ctx *gin.Context) {
+func IndexAreas(ctx *gin.Context) {
 
 	client := micro.NewService()
 	indexService := index.NewIndexService(config.INDEX, client.Client())
@@ -28,7 +28,7 @@ func Areas(ctx *gin.Context) {
 	return
 }
 
-func Banner(ctx *gin.Context) {
+func IndexBanner(ctx *gin.Context) {
 	client := micro.NewService()
 	indexService := index.NewIndexService(config.INDEX, client.Client())
 
