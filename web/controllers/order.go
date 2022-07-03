@@ -76,10 +76,80 @@ func OrderList(ctx *gin.Context) {
 
 //更新订单状态
 func OrderUpdate(ctx *gin.Context) {
+	orderId := ctx.PostForm("order_id")
+	status := ctx.PostForm("status")
 
+	orderIdInt, err := strconv.Atoi(orderId)
+	if  err != nil {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "参数错误:order_id"+err.Error()))
+		return
+	}
+	if  orderIdInt == 0 {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "缺少参数:order_id"))
+		return
+	}
+
+	statusInt, ok := order.OrderStatus_value[status]
+	if !ok {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "缺少参数:status"))
+		return
+	}
+
+	userInfo, exists := ctx.Get("user_info")
+	if !exists {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
+		return
+	}
+
+	client := micro.NewService()
+	orderService := order.NewOrderService(config.ORDER, client.Client())
+
+	_, err = orderService.UpdateStatus(context.TODO(), &order.StatusRequest{Status: order.OrderStatus(statusInt),UserId: uint32(userInfo.Id), OrderId: uint32(orderIdInt)})
+	if err != nil {
+		msg := GetServiceError(err.Error())
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "操作失败:"+msg.Detail))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_OK, "操作成功"))
+	return
 }
 
 //评论
 func OrderComment(ctx *gin.Context) {
+	orderId := ctx.PostForm("order_id")
+	comment := ctx.PostForm("comment")
 
+	orderIdInt, err := strconv.Atoi(orderId)
+	if  err != nil {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "参数错误:order_id"+err.Error()))
+		return
+	}
+	if  orderIdInt == 0 {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "缺少参数:order_id"))
+		return
+	}
+	if comment == "" {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "请输入你的评论"))
+		return
+	}
+
+	userInfo, exists := ctx.Get("user_info")
+	if !exists {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
+		return
+	}
+
+	client := micro.NewService()
+	orderService := order.NewOrderService(config.ORDER, client.Client())
+
+	_, err = orderService.Comment(context.TODO(), &order.CommentRequest{OrderId: uint32(orderIdInt), UserId:uint32(userInfo.Id),Comment: comment})
+	if err != nil {
+		msg := GetServiceError(err.Error())
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "评论失败:"+msg.Detail))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_OK, "评论成功"))
+	return
 }
