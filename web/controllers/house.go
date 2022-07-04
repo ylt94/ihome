@@ -12,6 +12,22 @@ import (
 	"github.com/ylt94/ihome/web/utils"
 )
 
+type createParam struct {
+	Title     string   `form:"title" binding:"required"`
+	Price     uint32   `form:"price" binding:"required"`
+	AreaId    uint32   `form:"area_id" binding:"required"`
+	Address   string   `form:"address" binding:"required"`
+	RoomCount uint32   `form:"room_count binding:"required""`
+	Acreage   uint32   `form:"acreage" binding:"required"`
+	Unit      string   `form:"uint" binding:"required"`
+	Capacity  uint32   `form:"capacity" binding:"required"`
+	Beds 	  string    `form:"beds" binding:"required"`
+	Deposit   uint32	`form:"deposit binding:"required"`
+	MinDays	  uint32    `form:"min_days" binding:"required"`
+	MaxDays	  uint32    `form:"max_days" binding:"required"`
+	Facility  []uint32 `form:"Facility[]""`
+}
+
 //房屋信息列表
 func HouseList(ctx *gin.Context) {
 	aid, _ := strconv.Atoi(ctx.Query("aid"))
@@ -105,5 +121,37 @@ func HouseDetail(ctx *gin.Context) {
 
 //发布房源
 func HouseCreate(ctx *gin.Context) {
+	var params createParam
+	if err := ctx.ShouldBind(&params); err != nil {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, err.Error()))
+		return
+	}
 
+	req := house.CreateRequest{
+		Title: params.Title,
+		Price: params.Price,
+		AreaId: params.AreaId,
+		Address: params.Address,
+		RoomCount: params.RoomCount,
+		Acreage: params.Acreage,
+		Unit: params.Unit,
+		Capacity: params.Capacity,
+		Beds: params.Beds,
+		Deposit: params.Deposit,
+		MinDays: params.MinDays,
+		MaxDays: params.MaxDays,
+		Facility: params.Facility,
+	}
+
+	client := micro.NewService()
+	houseService := house.NewHouseService(config.HOUSE, client.Client())
+
+	rsp, err := houseService.Create(context.TODO(), &req)
+	if err != nil {
+		msg := GetServiceError(err.Error())
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, msg.Detail))
+		return
+	}
+	ctx.JSON(http.StatusOK, GetReturn(rsp, utils.RECODE_OK, "发布成功"))
+	return
 }
