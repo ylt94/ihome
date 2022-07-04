@@ -2,23 +2,23 @@ package controllers
 
 import (
 	"context"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2"
 	house "github.com/ylt94/ihome/services/house/proto/house"
 	"github.com/ylt94/ihome/web/config"
 	"github.com/ylt94/ihome/web/utils"
-	"net/http"
-	"strconv"
 )
-
 
 //房屋信息列表
 func HouseList(ctx *gin.Context) {
-	aid,_ := strconv.Atoi(ctx.Query("aid"))
+	aid, _ := strconv.Atoi(ctx.Query("aid"))
 	sd := ctx.Query("sd")
 	ed := ctx.Query("ed")
-	page,_ := strconv.Atoi(ctx.Query("p"))
-	request := &house.ListRequest{Aid :uint32(aid), StartDate: sd, EndDate: ed, Page: uint32(page)}
+	page, _ := strconv.Atoi(ctx.Query("p"))
+	request := &house.ListRequest{Aid: uint32(aid), StartDate: sd, EndDate: ed, Page: uint32(page)}
 
 	client := micro.NewService()
 	houseService := house.NewHouseService(config.HOUSE, client.Client())
@@ -26,7 +26,7 @@ func HouseList(ctx *gin.Context) {
 	rsp, err := houseService.List(context.TODO(), request)
 	if err != nil {
 		msg := GetServiceError(err.Error())
-		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR,"数据获取失败:"+msg.Detail))
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "数据获取失败:"+msg.Detail))
 		return
 	}
 
@@ -34,12 +34,11 @@ func HouseList(ctx *gin.Context) {
 	return
 }
 
-
 //上传房屋图片
 func HouseUploadImage(ctx *gin.Context) {
 	houseId := ctx.Param("house_id")
-	houseIdInt,_ := strconv.ParseInt(houseId, 10, 32)
-	if  houseIdInt == 0 {
+	houseIdInt, _ := strconv.ParseInt(houseId, 10, 32)
+	if houseIdInt == 0 {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "参数错误:house_id"))
 		return
 	}
@@ -50,7 +49,7 @@ func HouseUploadImage(ctx *gin.Context) {
 		return
 	}
 
-	path := "/views/images/"+"house_"+houseId+"_"+file.Filename
+	path := "/views/images/" + "house_" + houseId + "_" + file.Filename
 	err = ctx.SaveUploadedFile(file, path)
 	if err != nil {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "图片保存失败:"+err.Error()))
@@ -70,18 +69,17 @@ func HouseUploadImage(ctx *gin.Context) {
 	host := ctx.Request.Header.Get("Host")
 	path = host + path
 
-	res := struct{Url string}{}
+	res := struct{ Url string }{}
 	res.Url = path
 	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
 	return
 }
 
-
 //详情
 func HouseDetail(ctx *gin.Context) {
 	houseId := ctx.Param("house_id")
-	houseIdInt,_ := strconv.Atoi(houseId)
-	if  houseIdInt== 0 {
+	houseIdInt, _ := strconv.Atoi(houseId)
+	if houseIdInt == 0 {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "参数错误:house_id"))
 		return
 	}
@@ -95,16 +93,15 @@ func HouseDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "数据获取失败:"+msg.Detail))
 		return
 	}
-	res := struct{
-		House house.DetailResponse
+	res := struct {
+		House  house.DetailResponse
 		UserId uint32
 	}{
-		House: *rsp,
+		House:  *rsp,
 		UserId: rsp.UserId,
 	}
 	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
 }
-
 
 //发布房源
 func HouseCreate(ctx *gin.Context) {
