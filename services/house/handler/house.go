@@ -28,6 +28,10 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 		where["house.created_at"] = model.WhereItem{Condition: "<=", Val: req.GetEndDate()}
 	}
 
+	if req.UserId != 0 {
+		where["house.user_id"] = model.WhereItem{Condition: "=", Val: req.GetUserId()}
+	}
+
 	//获取house表数据
 	offset := 10
 	page := req.GetPage()

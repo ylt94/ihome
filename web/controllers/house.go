@@ -50,6 +50,36 @@ func HouseList(ctx *gin.Context) {
 	return
 }
 
+//房屋信息列表
+func UserHouseList(ctx *gin.Context) {
+	aid, _ := strconv.Atoi(ctx.Query("aid"))
+	sd := ctx.Query("sd")
+	ed := ctx.Query("ed")
+	page, _ := strconv.Atoi(ctx.Query("p"))
+
+	userInfo, exists := ctx.Get("user_info")
+	if !exists {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
+		return
+	}
+	userId, _ := userInfo.Id
+
+	request := &house.ListRequest{Aid: uint32(aid), StartDate: sd, EndDate: ed, Page: uint32(page), UserId : uint32(userId)}
+
+	client := micro.NewService()
+	houseService := house.NewHouseService(config.HOUSE, client.Client())
+
+	rsp, err := houseService.List(context.TODO(), request)
+	if err != nil {
+		msg := GetServiceError(err.Error())
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "数据获取失败:"+msg.Detail))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, GetReturn(rsp, utils.RECODE_OK, "成功"))
+	return
+}
+
 //上传房屋图片
 func HouseUploadImage(ctx *gin.Context) {
 	houseId := ctx.Param("house_id")
