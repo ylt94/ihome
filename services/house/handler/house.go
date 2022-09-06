@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"sync"
 	"context"
 	"errors"
+	"fmt"
+	"sync"
 
 	"github.com/ylt94/ihome/services/house/model"
 
@@ -59,8 +60,8 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	}
 
 	userIds := make([]uint32, 0, offset)
-	for k, _ := range mainData {
-		userIds = append(userIds, mainData[k].UserId)
+	for _, item := range mainData {
+		userIds = append(userIds, item.UserId)
 	}
 
 	//获取用户信息
@@ -68,12 +69,11 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
 
 	userMapData := make(map[uint32]string, offset)
-	for k, _ := range userData {
-		userMapData[userData[k].Id] = userData[k].AvatarUrl
+	for _, item := range userData {
+		userMapData[item.Id] = item.AvatarUrl
 	}
 
-	for k, _ := range mainData {
-		item := mainData[k]
+	for _, item := range mainData {
 		listItem := house.ListItem{
 			Address:    item.Address,
 			AreaName:   item.AreaName,
@@ -138,7 +138,7 @@ func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, 
 	houseModel := new(model.House)
 	houseModel.Detail(houseId, "index_image_url")
 	if len(houseModel.IndexImageUrl) == 0 {
-		houseModel.InsertIndexImage(houseId, map[string]interface{}{"index_image_url" : url})
+		houseModel.InsertIndexImage(houseId, map[string]interface{}{"index_image_url": url})
 	} else {
 		imageModel := new(model.HouseImage)
 		imageModel.InsertImages(houseId, []string{url})
@@ -158,7 +158,7 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 	houses := model.House{}
 	(&houses).Detail(houseId, "*")
 	if houses.Id == 0 {
-		return errors.New("房屋信息不存在或已被删除!")
+		return fmt.Errorf("房屋信息不存在或已被删除!")
 	}
 
 	//协程获取
@@ -176,7 +176,6 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 			*images = append(*images, v.Url)
 		}
 	}(&images, cap)
-	
 
 	//获取标签信息
 	cap = 25
@@ -201,16 +200,15 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 			CreatedAt string
 		}, 0, limit)
 		new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
-		for k, _ := range orderData {
+		for _, item := range orderData {
 			comment := house.Comment{
-				UserName: orderData[k].Name,
-				Comment:  orderData[k].Comment,
-				Ctime:    orderData[k].CreatedAt,
+				UserName: item.Name,
+				Comment:  item.Comment,
+				Ctime:    item.CreatedAt,
 			}
 			*comments = append(*comments, &comment)
 		}
 	}(&comments, limit)
-	
 
 	//获取用户信息
 	user := new(model.User)

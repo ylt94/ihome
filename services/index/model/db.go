@@ -12,7 +12,7 @@ func Db() *gorm.DB {
 	if Conn != nil {
 		return Conn
 	}
-	dsn := "root:123456@tcp(127.0.0.1:3306)/ihome?charset=uft8mb4&parseTime=True&loc=Local"
+	dsn := "root:123456@tcp(127.0.0.1:3306)/ihome?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{NamingStrategy: schema.NamingStrategy{SingularTable: true}})
 	if err != nil {
 		panic(err.Error())

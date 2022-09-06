@@ -9,6 +9,7 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 require (
 	github.com/golang/protobuf v1.5.2
 	github.com/micro/go-micro/v2 v2.9.1
+	github.com/prometheus/common v0.6.0
 	gorm.io/driver/mysql v1.3.4
 	gorm.io/gorm v1.23.6
 )
