@@ -19,6 +19,7 @@ message ListRequest {
     string start_date = 2;
     string end_date = 3;
     uint32 page = 4;
+    uint32 user_id = 5;
 
 }
 
