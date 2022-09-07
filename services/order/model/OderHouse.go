@@ -1,5 +1,9 @@
 package model
 
+import (
+	"time"
+)
+
 /* 订单 table_name = order */
 type OrderHouse struct {
 	//gorm.Model        //订单编号
@@ -17,8 +21,8 @@ type OrderHouse struct {
 	Comment     string `gorm:"size:512"`              //订单评论
 	Credit      int8   //表示个人征信情况 true表示良好
 	HouseUserId uint32
-	CreatedAt   string
-	UpdatedAt   string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (m *OrderHouse) Create() {

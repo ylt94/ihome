@@ -11,6 +11,10 @@ type Facility struct {
 	Name string
 }
 
+func (e *HouseFacility) TableName() string {
+	return "house_facilities"
+}
+
 func (e *HouseFacility) GetHouseDataByHouseIds(datas interface{}, HouseIds []uint32, fields string) {
 	query := Db().Model(e)
 	query.Where("house_id in ?", HouseIds)

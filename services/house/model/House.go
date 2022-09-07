@@ -1,6 +1,9 @@
 package model
 
-import "math"
+import (
+	"math"
+	"time"
+)
 
 type House struct {
 	Id            uint32 //房屋编号
@@ -19,9 +22,9 @@ type House struct {
 	MaxDays       uint32 `gorm:"default:0" json:"max_days"`                  //最多入住的天数 0表示不限制
 	OrderCount    uint32 `gorm:"default:0" json:"order_count"`               //预定完成的该房屋的订单数
 	IndexImageUrl string `gorm:"size:256;default:''" json:"index_image_url"` //房屋主图片路径
-	CreatedAt     string
-	UpdatedAt     string
-	DeletedAt     string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     time.Time
 }
 
 func (e *House) GetList(data interface{}, where map[string]WhereItem, fields string, page int, limit int) (uint32, uint32) {
@@ -42,7 +45,7 @@ func (e *House) GetList(data interface{}, where map[string]WhereItem, fields str
 
 	query.Find(data)
 
-	totalPage := math.Ceil(float64(count)/float64(limit))
+	totalPage := math.Ceil(float64(count) / float64(limit))
 	return uint32(page), uint32(totalPage)
 }
 
@@ -52,7 +55,7 @@ func (e *House) Detail(HouseId uint32, fields string) {
 	db.First(e)
 }
 
-func (e *House) InsertIndexImage (houseId uint32, updateData map[string]interface{}) {
+func (e *House) InsertIndexImage(houseId uint32, updateData map[string]interface{}) {
 	Db().Model(e).Where("id = ?", houseId).Updates(updateData)
 }
 

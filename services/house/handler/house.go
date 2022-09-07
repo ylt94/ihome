@@ -56,10 +56,9 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 
 	houseModel := new(model.House)
 	_, count := houseModel.GetList(&mainData, where, fields, int(page), offset)
-
 	rsp.CurrentPage = page
 	rsp.TotalPage = count
-	if count == 0 {
+	if len(mainData) == 0 {
 		return nil
 	}
 
@@ -70,7 +69,7 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 
 	//获取用户信息
 	userData := make([]model.User, 0, offset)
-	new(model.User).GetUserByIds(&userData, userIds, "id, user_avatar")
+	new(model.User).GetUserByIds(&userData, userIds, "id, avatar_url")
 
 	userMapData := make(map[uint32]string, offset)
 	for _, item := range userData {
@@ -111,9 +110,14 @@ func (e *House) Create(ctx context.Context, req *house.CreateRequest, rsp *house
 	houseModel.Deposit = req.Deposit
 	houseModel.MinDays = req.MinDays
 	houseModel.MaxDays = req.MaxDays
-	houseModel.Create()
 
 	tx := model.Db().Begin()
+	defer func() {
+		if p := recover(); p != nil {
+			fmt.Println("panic:", p)
+			tx.Rollback()
+		}
+	}()
 	if err := tx.Create(houseModel).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -131,7 +135,6 @@ func (e *House) Create(ctx context.Context, req *house.CreateRequest, rsp *house
 		tx.Rollback()
 		return err
 	}
-
 	return tx.Commit().Error
 }
 
@@ -139,6 +142,7 @@ func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, 
 	log.Info("Received House.UploadImage request")
 	houseId := req.HouseId
 	url := req.Url
+
 	houseModel := new(model.House)
 	houseModel.Detail(houseId, "index_image_url")
 	if len(houseModel.IndexImageUrl) == 0 {
@@ -147,6 +151,7 @@ func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, 
 		imageModel := new(model.HouseImage)
 		imageModel.InsertImages(houseId, []string{url})
 	}
+
 	rsp.Url = url
 	return nil
 }
@@ -167,7 +172,7 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 
 	//协程获取
 	wg := sync.WaitGroup{}
-	wg.Add(3)
+	wg.Add(4)
 
 	//查询图片信息
 	cap := 10
@@ -187,7 +192,7 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 	go func(facilitys *[]string, cap int) {
 		defer wg.Done()
 		facilityData := make([]struct{ Name string }, 0, cap)
-		new(model.HouseFacility).GetHouseDataByHouseIds(facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
+		new(model.HouseFacility).GetHouseDataByHouseIds(&facilityData, []uint32{houseId}, "house_facilities.house_id, facility.name")
 		for _, v := range facilityData {
 			*facilitys = append(*facilitys, v.Name)
 		}
@@ -218,7 +223,7 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 	user := new(model.User)
 	go func(user *model.User) {
 		defer wg.Done()
-		user.GetUserById(houses.UserId, "user_id, name, avatar_url")
+		user.GetUserById(houses.UserId, "id as user_id, name, avatar_url")
 	}(user)
 	wg.Wait()
 

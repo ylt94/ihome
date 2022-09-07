@@ -13,6 +13,8 @@ import (
 	order "github.com/ylt94/ihome/services/order/proto/order"
 )
 
+const TIMEFORMAT = "2006-01-02"
+
 type Order struct{}
 
 // Call is a single request handler called via client.Call or the generated client code
@@ -29,29 +31,28 @@ func (e *Order) Create(ctx context.Context, req *order.CreateRequest, rsp *order
 	}
 
 	//根据开始时间和结束时间计算天数
-	timeFormat := "2006-01-02 15:03:04"
-	startTime,err := time.ParseInLocation(timeFormat, req.StartDate, time.Local)
+	startTime, err := time.ParseInLocation(TIMEFORMAT, req.StartDate, time.Local)
 	if err != nil {
 		return err
 	}
 
-	endTime, err := time.ParseInLocation(timeFormat, req.EndDate, time.Local)
+	endTime, err := time.ParseInLocation(TIMEFORMAT, req.EndDate, time.Local)
 	if err != nil {
 		return err
 	}
-	days := uint32(math.Ceil(startTime.Sub(endTime).Hours()/24))
+	days := uint32(math.Ceil(endTime.Sub(startTime).Hours() / 24))
 
 	OrderModel := model.OrderHouse{
-		UserId: req.UserId,
-		HouseId: houseModel.Id,
-		BeginDate: req.StartDate,
-		EndDate: req.EndDate,
-		Days :days,
-		HousePrice:houseModel.Price,
-		Amount:houseModel.Price*days,
-		Status: order.OrderStatus_WAIT.String(),
-		Credit: 1,
-		HouseUserId:houseModel.UserId,
+		UserId:      req.UserId,
+		HouseId:     houseModel.Id,
+		BeginDate:   req.StartDate,
+		EndDate:     req.EndDate,
+		Days:        days,
+		HousePrice:  houseModel.Price,
+		Amount:      houseModel.Price * days,
+		Status:      order.OrderStatus_WAIT.String(),
+		Credit:      1,
+		HouseUserId: houseModel.UserId,
 	}
 	OrderModel.Create()
 	if OrderModel.ID == 0 {
@@ -98,7 +99,7 @@ func (e *Order) List(ctx context.Context, req *order.ListRequest, rsp *order.Lis
 		item := order.ListItem{
 			Amount:    v.Amount,
 			Comment:   v.Comment,
-			Ctime:     v.CreatedAt,
+			Ctime:     v.CreatedAt.String(),
 			Days:      v.Days,
 			EndDate:   v.EndDate,
 			ImgUrl:    houseMapData[v.HouseId].IndexImageUrl,

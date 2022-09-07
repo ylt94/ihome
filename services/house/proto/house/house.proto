@@ -58,6 +58,7 @@ message CreateRequest {
     uint32 min_days = 11;
     uint32 max_days = 12;
     repeated uint32  facility = 13;
+    uint32 user_id = 14;
 }
 
 
