@@ -37,6 +37,7 @@ func TestCreate(T *testing.T) {
 		MinDays:   1,
 		MaxDays:   0,
 		Facility:  []uint32{1},
+		UserId: 1,
 	}
 
 	rsp := &house.CreateResponse{}

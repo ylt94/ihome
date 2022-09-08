@@ -94,12 +94,13 @@ func (e *Order) List(ctx context.Context, req *order.ListRequest, rsp *order.Lis
 	for _, v := range houseData {
 		houseMapData[v.Id] = model.House{IndexImageUrl: v.IndexImageUrl, Title: v.Title}
 	}
+
 	//组装返回数据
 	for _, v := range data {
 		item := order.ListItem{
 			Amount:    v.Amount,
 			Comment:   v.Comment,
-			Ctime:     v.CreatedAt.String(),
+			Ctime:     v.CreatedAt.Format(TIMEFORMAT),
 			Days:      v.Days,
 			EndDate:   v.EndDate,
 			ImgUrl:    houseMapData[v.HouseId].IndexImageUrl,
@@ -122,7 +123,7 @@ func (e *Order) UpdateStatus(ctx context.Context, req *order.StatusRequest, rsp 
 	if req.Status != order.OrderStatus_ACCEPT && req.Status != order.OrderStatus_REJECT {
 		return errors.New("错误的订单状态")
 	}
-
+	status := req.Status.String()
 	orderModel := new(model.OrderHouse)
 
 	where := make(map[string]model.WhereItem, 3)
@@ -135,7 +136,7 @@ func (e *Order) UpdateStatus(ctx context.Context, req *order.StatusRequest, rsp 
 		return errors.New("订单不存在")
 	}
 
-	updateData := map[string]interface{}{"status": req.Status}
+	updateData := map[string]interface{}{"status": status}
 	orderModel.Update(where, updateData)
 
 	return nil

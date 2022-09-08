@@ -157,6 +157,13 @@ func HouseCreate(ctx *gin.Context) {
 		return
 	}
 
+	userInfo, exists := ctx.Get("user_info")
+	if !exists {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
+		return
+	}
+	userId, _ := userInfo.Id
+
 	req := house.CreateRequest{
 		Title: params.Title,
 		Price: params.Price,
@@ -171,6 +178,7 @@ func HouseCreate(ctx *gin.Context) {
 		MinDays: params.MinDays,
 		MaxDays: params.MaxDays,
 		Facility: params.Facility,
+		UserId: userId,
 	}
 
 	client := micro.NewService()

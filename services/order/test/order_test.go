@@ -39,3 +39,33 @@ func TestList(T *testing.T) {
 	}
 	log.Println(rsp)
 }
+
+func TestUpdateStatus(T *testing.T) {
+	req := &order.StatusRequest{
+		UserId: 1,
+		OrderId: 1,
+		Status: 1,
+	}
+	rsp := &order.StatusResponse{}
+
+	err := new(handler.Order).UpdateStatus(context.TODO(), req, rsp)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(rsp)
+}
+
+func TestComment(T *testing.T) {
+	req := &order.CommentRequest{
+		UserId: 2,
+		OrderId: 1,
+		Comment: "非常好",
+	}
+	rsp := &order.CommentResponse{}
+
+	err := new(handler.Order).Comment(context.TODO(), req, rsp)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(rsp)
+}

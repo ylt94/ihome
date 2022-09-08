@@ -98,8 +98,9 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 func (e *House) Create(ctx context.Context, req *house.CreateRequest, rsp *house.CreateResponse) error {
 	log.Info("Received House.Create request")
 	houseModel := new(model.House)
-	houseModel.Title = req.Title
-	houseModel.Price = req.Price
+	houseModel.Title = req.GetTitle()
+	houseModel.UserId = req.GetUserId()
+	houseModel.Price = req.GetPrice()
 	houseModel.AreaId = req.AreaId
 	houseModel.Address = req.Address
 	houseModel.RoomCount = req.RoomCount

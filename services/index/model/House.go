@@ -1,7 +1,5 @@
 package model
 
-import "math"
-
 type House struct {
 	Id            uint32 //房屋编号
 	UserId        uint32 //房屋主人的用户编号  与用户进行关联
@@ -22,40 +20,4 @@ type House struct {
 	CreatedAt     string
 	UpdatedAt     string
 	DeletedAt     string
-}
-
-func (e *House) GetList(data interface{}, where map[string]WhereItem, fields string, page int, limit int) (uint32, uint32) {
-	db := Db()
-	query := db.Model(e)
-
-	query = getWhere(query, where)
-	countQuery := query
-
-	query.Select(fields).Joins("left join area on house.area_id = area.id")
-
-	var count int64
-	if page > 0 {
-		countQuery.Count(&count)
-		offset := (page - 1) * limit
-		query.Limit(limit).Offset(offset)
-	}
-
-	query.Find(data)
-
-	totalPage := math.Ceil(float64(count) / float64(limit))
-	return uint32(page), uint32(totalPage)
-}
-
-func (e *House) Detail(HouseId uint32, fields string) {
-	db := Db()
-	db.Select(fields).Where("id = ?", HouseId)
-	db.First(e)
-}
-
-func (e *House) InsertIndexImage(houseId uint32, updateData map[string]interface{}) {
-	Db().Model(e).Where("id = ?", houseId).Updates(updateData)
-}
-
-func (e *House) Create() {
-	Db().Create(e)
 }
