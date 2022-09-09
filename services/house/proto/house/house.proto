@@ -10,8 +10,6 @@ service House {
 	rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {}
 
 	rpc Detail(DetailRequest) returns (DetailResponse) {}
-
-    rpc DataByHouseIds(DataRequest) returns (DataResponse) {}
 }
 
 message ListRequest {

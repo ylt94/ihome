@@ -47,7 +47,7 @@
 
                                 <li>订单状态：
                                     <span>
-                                        {{if "WAIT_ACCEPT" == order.status}}
+                                        {{if "WAIT" == order.status}}
                                             待接单
                                         {{else if "WAIT_COMMENT" == order.status}}
                                             待评价
@@ -55,6 +55,8 @@
                                             已完成
                                         {{else if "REJECTED" == order.status}}
                                             已拒单
+                                        {{else if "ACCEPT" == order.status}}
+                                            已接单
                                         {{/if}}
                                     </span>
                                 </li>

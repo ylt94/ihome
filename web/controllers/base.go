@@ -13,6 +13,13 @@ type microResult struct {
 	Status string `json:"status"`
 }
 
+type User struct {
+	Id         uint32 `json:"user_id"`
+	Name       string `json:"name"`
+	Mobile     string `json:"mobile"`
+	Avatar_url string `json:"avatar_url"`
+}
+
 func GetReturn(data interface{}, inputCode ...string) map[string]interface{} {
 	res := make(map[string]interface{}, 3)
 	code := utils.RECODE_OK

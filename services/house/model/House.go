@@ -51,8 +51,7 @@ func (e *House) GetList(data interface{}, where map[string]WhereItem, fields str
 
 func (e *House) Detail(HouseId uint32, fields string) {
 	db := Db()
-	db.Select(fields).Where("id = ?", HouseId)
-	db.First(e)
+	db.Debug().Select(fields).Where("id = ?", HouseId).First(e)
 }
 
 func (e *House) InsertIndexImage(houseId uint32, updateData map[string]interface{}) {

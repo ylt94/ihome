@@ -27,12 +27,12 @@ func userRoutes(R *gin.RouterGroup) {
 		UR.PUT("/name", controllers.UpdateUserName)
 
 		//获取（检查）用户实名信息
-		UR.GET("/auth", controllers.UserCheckRelaName)
+		UR.GET("/auth", controllers.UserCheckRealName)
 
 		//实名认证
 		UR.POST("/auth", controllers.UserAuth)
 
-		UR.GET("/house", controllers.HouseList)
+		UR.GET("/houses", controllers.UserHouseList)
 
 		UR.GET("/orders", controllers.OrderList)
 	}

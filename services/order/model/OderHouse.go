@@ -12,8 +12,8 @@ type OrderHouse struct {
 	HouseId uint32 `json:"house_id"` //预定的房间编号   //与房屋信息进行关联
 	// BeginDate   time.Time `gorm:"type:datetime"` //预定的起始时间
 	// EndDate     time.Time `gorm:"type:datetime"` //预定的结束时间
-	BeginDate   string `gorm:"type:datetime"` //预定的起始时间
-	EndDate     string `gorm:"type:datetime"` //预定的结束时间
+	BeginDate   time.Time  `gorm:"type:datetime"` //预定的起始时间
+	EndDate     time.Time  `gorm:"type:datetime"` //预定的结束时间
 	Days        uint32 //预定总天数
 	HousePrice  uint32 //房屋的单价
 	Amount      uint32 //订单总金额

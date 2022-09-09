@@ -31,11 +31,19 @@ $(document).ready(function(){
         // 将表单的数据形成json，向后端发送请求
         var formData = {};
         $(this).serializeArray().map(function (x) { formData[x.name] = x.value });
+        formData.price = formData.price*100;
+        formData.area_id = parseInt(formData.area_id);
+        formData.capacity = parseInt(formData.capacity);
+        formData.deposit = parseInt(formData.deposit*100);
+        formData.max_days = parseInt(formData.max_days);
+        formData.min_days = parseInt(formData.min_days);
+        formData.room_count = parseInt(formData.room_count);
+        formData.acreage = parseInt(formData.acreage);
 
         // 对于房屋设施的checkbox需要特殊处理
         var facility = [];
         // $("input:checkbox:checked[name=facility]").each(function(i, x){ facility[i]=x.value });
-        $(":checked[name=facility]").each(function(i, x){ facility[i]=x.value });
+        $(":checked[name=facility]").each(function(i, x){ facility[i]=parseInt(x.value) });
 
         formData.facility = facility;
 

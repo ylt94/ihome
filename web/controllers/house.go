@@ -13,19 +13,19 @@ import (
 )
 
 type createParam struct {
-	Title     string   `form:"title" binding:"required"`
-	Price     uint32   `form:"price" binding:"required"`
-	AreaId    uint32   `form:"area_id" binding:"required"`
-	Address   string   `form:"address" binding:"required"`
-	RoomCount uint32   `form:"room_count binding:"required""`
-	Acreage   uint32   `form:"acreage" binding:"required"`
-	Unit      string   `form:"uint" binding:"required"`
-	Capacity  uint32   `form:"capacity" binding:"required"`
-	Beds 	  string    `form:"beds" binding:"required"`
-	Deposit   uint32	`form:"deposit binding:"required"`
-	MinDays	  uint32    `form:"min_days" binding:"required"`
-	MaxDays	  uint32    `form:"max_days" binding:"required"`
-	Facility  []uint32 `form:"Facility[]""`
+	Title     string   `json:"title" form:"title" binding:"required"`
+	Price     uint32   `json:"price" form:"price" binding:"required"`
+	AreaId    uint32   `json:"area_id" form:"area_id" binding:"required"`
+	Address   string   `json:"address" form:"address" binding:"required"`
+	RoomCount uint32   `json:"room_count" form:"room_count binding:"required""`
+	Acreage   uint32   `json:"acreage" form:"acreage" binding:"required"`
+	Unit      string   `json:"unit" form:"unit" binding:"required"`
+	Capacity  uint32   `json:"capacity" form:"capacity" binding:"required"`
+	Beds 	  string   `json:"beds" form:"beds" binding:"required"`
+	Deposit   uint32   `json:"deposit" form:"deposit binding:"required"`
+	MinDays	  uint32   `json:"min_days" form:"min_days" binding:"required"`
+	MaxDays	  uint32   `json:"max_days" form:"max_days""`
+	Facility  []uint32 `json:"facility" form:"facility[]""`
 }
 
 //房屋信息列表
@@ -62,9 +62,10 @@ func UserHouseList(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
-	userId, _ := userInfo.Id
+	user := userInfo.(User)
+	userId:= user.Id
 
-	request := &house.ListRequest{Aid: uint32(aid), StartDate: sd, EndDate: ed, Page: uint32(page), UserId : uint32(userId)}
+	request := &house.ListRequest{Aid: uint32(aid), StartDate: sd, EndDate: ed, Page: uint32(page), UserId : userId}
 
 	client := micro.NewService()
 	houseService := house.NewHouseService(config.HOUSE, client.Client())
@@ -89,33 +90,33 @@ func HouseUploadImage(ctx *gin.Context) {
 		return
 	}
 
-	file, err := ctx.FormFile("image")
+	file, err := ctx.FormFile("house_image")
 	if err != nil {
-		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "图片保存失败:"+err.Error()))
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "图片保存失败1:"+err.Error()))
 		return
 	}
 
-	path := "/views/images/" + "house_" + houseId + "_" + file.Filename
-	err = ctx.SaveUploadedFile(file, path)
+	fileName := "house_" + houseId + "_" + file.Filename
+	path := "/views/images/" + fileName
+	err = ctx.SaveUploadedFile(file, "."+path)
 	if err != nil {
-		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "图片保存失败:"+err.Error()))
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "图片保存失败2:"+err.Error()))
 		return
 	}
 
 	client := micro.NewService()
 	houseService := house.NewHouseService(config.HOUSE, client.Client())
 
-	_, err = houseService.UploadImage(context.TODO(), &house.UploadImageRequest{HouseId: uint32(houseIdInt), Url: path})
+	_, err = houseService.UploadImage(context.TODO(), &house.UploadImageRequest{HouseId: uint32(houseIdInt), Url: "/home/images/"+fileName})
 	if err != nil {
 		msg := GetServiceError(err.Error())
-		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_USERERR, "图片保存失败:"+msg.Detail))
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_USERERR, "图片保存失败3:"+msg.Detail))
 		return
 	}
 
-	host := ctx.Request.Header.Get("Host")
-	path = host + path
+	path = "/home/images/"+fileName
 
-	res := struct{ Url string }{}
+	res := struct{ Url string `json:"url"`}{}
 	res.Url = path
 	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
 	return
@@ -130,6 +131,14 @@ func HouseDetail(ctx *gin.Context) {
 		return
 	}
 
+	userInfo, exists := ctx.Get("user_info")
+	if !exists {
+		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
+		return
+	}
+	user := userInfo.(User)
+	userId:= user.Id
+
 	client := micro.NewService()
 	houseService := house.NewHouseService(config.HOUSE, client.Client())
 
@@ -139,12 +148,13 @@ func HouseDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "数据获取失败:"+msg.Detail))
 		return
 	}
-	res := struct {
-		House  house.DetailResponse
-		UserId uint32
-	}{
-		House:  *rsp,
-		UserId: rsp.UserId,
+	type result struct {
+		House *house.DetailResponse `json:"house"`
+		UserId uint32 `json:"user_id"`
+	}
+	res := result{
+		House:  rsp,
+		UserId: userId,
 	}
 	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
 }
@@ -162,7 +172,8 @@ func HouseCreate(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
-	userId, _ := userInfo.Id
+	user := userInfo.(User)
+	userId:= user.Id
 
 	req := house.CreateRequest{
 		Title: params.Title,

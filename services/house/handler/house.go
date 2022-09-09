@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/ylt94/ihome/services/house/model"
 
@@ -12,6 +13,8 @@ import (
 
 	house "github.com/ylt94/ihome/services/house/proto/house"
 )
+
+const TIMEFORMAT = "2006-01-02 15:04:05"
 
 type House struct{}
 
@@ -42,7 +45,7 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 	type list struct {
 		Address       string
 		AreaId        uint32
-		CreatedAt     string
+		CreatedAt     time.Time
 		Id            uint32
 		IndexImageUrl string
 		OrderCount    uint32
@@ -80,7 +83,7 @@ func (e *House) List(ctx context.Context, req *house.ListRequest, rsp *house.Lis
 		listItem := house.ListItem{
 			Address:    item.Address,
 			AreaName:   item.AreaName,
-			Ctime:      item.CreatedAt,
+			Ctime:      item.CreatedAt.Format(TIMEFORMAT),
 			HouseId:    item.Id,
 			ImageUrl:   item.IndexImageUrl,
 			OrderCount: item.OrderCount,
@@ -146,7 +149,7 @@ func (e *House) UploadImage(ctx context.Context, req *house.UploadImageRequest, 
 
 	houseModel := new(model.House)
 	houseModel.Detail(houseId, "index_image_url")
-	if len(houseModel.IndexImageUrl) == 0 {
+	if houseModel.IndexImageUrl == "" {
 		houseModel.InsertIndexImage(houseId, map[string]interface{}{"index_image_url": url})
 	} else {
 		imageModel := new(model.HouseImage)
@@ -207,14 +210,14 @@ func (e *House) Detail(ctx context.Context, req *house.DetailRequest, rsp *house
 		orderData := make([]struct {
 			Name      string
 			Comment   string
-			CreatedAt string
+			CreatedAt time.Time
 		}, 0, limit)
 		new(model.OrderHouse).GetCommentsByHouseId(&orderData, houseId, "user.name, order_house.comment,order_house.created_at", limit, "order_house.id desc")
 		for _, item := range orderData {
 			comment := house.Comment{
 				UserName: item.Name,
 				Comment:  item.Comment,
-				Ctime:    item.CreatedAt,
+				Ctime:    item.CreatedAt.Format(TIMEFORMAT),
 			}
 			*comments = append(*comments, &comment)
 		}

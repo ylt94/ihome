@@ -51,7 +51,8 @@ func OrderBuy(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
-	request.UserId = uint32(userInfo.Id)
+	user := userInfo.(User)
+	request.UserId = user.Id
 
 	client := micro.NewService()
 	orderService := order.NewOrderService(config.ORDER, client.Client())
@@ -69,7 +70,7 @@ func OrderBuy(ctx *gin.Context) {
 
 //订单列表
 func OrderList(ctx *gin.Context) {
-	role := ctx.Param("role")
+	role := ctx.Query("role")
 	if role == "" {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "缺少参数:role"))
 		return
@@ -80,7 +81,8 @@ func OrderList(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
-	UserId := uint32(userInfo.Id)
+	user := userInfo.(User)
+	UserId := user.Id
 
 	client := micro.NewService()
 	orderService := order.NewOrderService(config.ORDER, client.Client())
@@ -121,11 +123,13 @@ func OrderUpdate(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	user := userInfo.(User)
+	UserId := user.Id
 
 	client := micro.NewService()
 	orderService := order.NewOrderService(config.ORDER, client.Client())
 
-	_, err = orderService.UpdateStatus(context.TODO(), &order.StatusRequest{Status: order.OrderStatus(statusInt), UserId: uint32(userInfo.Id), OrderId: uint32(orderIdInt)})
+	_, err = orderService.UpdateStatus(context.TODO(), &order.StatusRequest{Status: order.OrderStatus(statusInt), UserId: UserId, OrderId: uint32(orderIdInt)})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "操作失败:"+msg.Detail))
@@ -160,11 +164,13 @@ func OrderComment(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	user := userInfo.(User)
+	UserId := user.Id
 
 	client := micro.NewService()
 	orderService := order.NewOrderService(config.ORDER, client.Client())
 
-	_, err = orderService.Comment(context.TODO(), &order.CommentRequest{OrderId: uint32(orderIdInt), UserId: uint32(userInfo.Id), Comment: comment})
+	_, err = orderService.Comment(context.TODO(), &order.CommentRequest{OrderId: uint32(orderIdInt), UserId: UserId, Comment: comment})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SERVERERR, "评论失败:"+msg.Detail))

@@ -46,7 +46,6 @@ type HouseService interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...client.CallOption) (*CreateResponse, error)
 	UploadImage(ctx context.Context, in *UploadImageRequest, opts ...client.CallOption) (*UploadImageResponse, error)
 	Detail(ctx context.Context, in *DetailRequest, opts ...client.CallOption) (*DetailResponse, error)
-	DataByHouseIds(ctx context.Context, in *DataRequest, opts ...client.CallOption) (*DataResponse, error)
 }
 
 type houseService struct {
@@ -101,16 +100,6 @@ func (c *houseService) Detail(ctx context.Context, in *DetailRequest, opts ...cl
 	return out, nil
 }
 
-func (c *houseService) DataByHouseIds(ctx context.Context, in *DataRequest, opts ...client.CallOption) (*DataResponse, error) {
-	req := c.c.NewRequest(c.name, "House.DataByHouseIds", in)
-	out := new(DataResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // Server API for House service
 
 type HouseHandler interface {
@@ -118,7 +107,6 @@ type HouseHandler interface {
 	Create(context.Context, *CreateRequest, *CreateResponse) error
 	UploadImage(context.Context, *UploadImageRequest, *UploadImageResponse) error
 	Detail(context.Context, *DetailRequest, *DetailResponse) error
-	DataByHouseIds(context.Context, *DataRequest, *DataResponse) error
 }
 
 func RegisterHouseHandler(s server.Server, hdlr HouseHandler, opts ...server.HandlerOption) error {
@@ -127,7 +115,6 @@ func RegisterHouseHandler(s server.Server, hdlr HouseHandler, opts ...server.Han
 		Create(ctx context.Context, in *CreateRequest, out *CreateResponse) error
 		UploadImage(ctx context.Context, in *UploadImageRequest, out *UploadImageResponse) error
 		Detail(ctx context.Context, in *DetailRequest, out *DetailResponse) error
-		DataByHouseIds(ctx context.Context, in *DataRequest, out *DataResponse) error
 	}
 	type House struct {
 		house
@@ -154,8 +141,4 @@ func (h *houseHandler) UploadImage(ctx context.Context, in *UploadImageRequest, 
 
 func (h *houseHandler) Detail(ctx context.Context, in *DetailRequest, out *DetailResponse) error {
 	return h.HouseHandler.Detail(ctx, in, out)
-}
-
-func (h *houseHandler) DataByHouseIds(ctx context.Context, in *DataRequest, out *DataResponse) error {
-	return h.HouseHandler.DataByHouseIds(ctx, in, out)
 }

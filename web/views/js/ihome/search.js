@@ -78,19 +78,19 @@ $(document).ready(function(){
     // 获取筛选条件中的城市区域信息
     $.get("/api/v1.0/areas", function(data){
         if ("0" == data.errno) {
-            var areaId = queryData["aid"];
+            var areaId = queryData["id"];
             if (areaId) {
                 for (var i=0; i<data.data.length; i++) {
                     areaId = parseInt(areaId);
                     if (data.data[i].aid == areaId) {
-                        $(".filter-area").append('<li area-id="'+ data.data[i].aid+'" class="active">'+ data.data[i].aname+'</li>');
+                        $(".filter-area").append('<li area-id="'+ data.data[i].id+'" class="active">'+ data.data[i].name+'</li>');
                     } else {
-                        $(".filter-area").append('<li area-id="'+ data.data[i].aid+'">'+ data.data[i].aname+'</li>');
+                        $(".filter-area").append('<li area-id="'+ data.data[i].id+'">'+ data.data[i].name+'</li>');
                     }
                 }
             } else {
                 for (var i=0; i<data.data.length; i++) {
-                    $(".filter-area").append('<li area-id="'+ data.data[i].aid+'">'+ data.data[i].aname+'</li>');
+                    $(".filter-area").append('<li area-id="'+ data.data[i].id+'">'+ data.data[i].name+'</li>');
                 }
             }
             updateHouseData("renew");

@@ -40,7 +40,6 @@ func IndexBanner(ctx *gin.Context) {
 		return
 	}
 
-	res := struct{Data []*index.House}{Data: rsp.Houses}
-	ctx.JSON(http.StatusOK, GetReturn(res, utils.RECODE_OK, "成功"))
+	ctx.JSON(http.StatusOK, GetReturn(rsp.Houses, utils.RECODE_OK, "成功"))
 	return
 }

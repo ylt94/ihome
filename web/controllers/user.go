@@ -14,17 +14,18 @@ import (
 )
 
 //检查用户实名信息
-func UserCheckRelaName(ctx *gin.Context) {
+func UserCheckRealName(ctx *gin.Context) {
 	userInfo, exists := ctx.Get("user_info")
 	if !exists {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	UserId := userInfo.(User).Id
 
 	client := micro.NewService()
 	authService := auth.NewAuthService(config.USER, client.Client())
 
-	rsp, err := authService.CheckRealNameAuth(context.TODO(), &auth.CheckAuthRequest{UserId: userInfo.Id})
+	rsp, err := authService.CheckRealNameAuth(context.TODO(), &auth.CheckAuthRequest{UserId: UserId})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR, msg.Detail))
@@ -42,10 +43,15 @@ func UserAuth(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	UserId := userInfo.(User).Id
 
-	realName := ctx.DefaultPostForm("real_name", "")
-	idCard := ctx.DefaultPostForm("id_card", "")
-	if realName == "" || idCard == "" {
+	params := &struct{
+		RealName string `json:"real_name"`
+		IdCard string `json:"id_card"`
+	}{}
+
+	ctx.Bind(params)
+	if params.RealName == "" || params.IdCard == "" {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "请将信息填写完整"))
 		return
 	}
@@ -53,7 +59,7 @@ func UserAuth(ctx *gin.Context) {
 	client := micro.NewService()
 	authService := auth.NewAuthService(config.USER, client.Client())
 
-	rsp, err := authService.RealNameAuth(context.TODO(), &auth.AuthRequest{UserId: userInfo.Id, RealName: realName, IdCard: idCard})
+	rsp, err := authService.RealNameAuth(context.TODO(), &auth.AuthRequest{UserId: UserId, RealName: params.RealName, IdCard: params.IdCard})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR,  "认证失败:"+msg.Detail))
@@ -75,10 +81,11 @@ func UserInfo(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	UserId := userInfo.(User).Id
 
 	client := micro.NewService()
 	userService := user.NewUserService(config.USER, client.Client())
-	rsp, err := userService.Info(context.TODO(), &user.InfoRequest{userInfo.Id})
+	rsp, err := userService.Info(context.TODO(), &user.InfoRequest{UserId: UserId})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_UNKNOWERR, msg.Detail))
@@ -96,8 +103,7 @@ func UploadUserAvatar(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
-
-	userId := userInfo.Id
+	UserId := userInfo.(User).Id
 
 	//保存图片
 	file, err := ctx.FormFile("avatar")
@@ -105,7 +111,9 @@ func UploadUserAvatar(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_PARAMERR, "头像上传失败:"+err.Error()))
 		return
 	}
-	path := "/views/images/" +"user_avatar_"+strconv.Itoa(userId)+"_"+file.Filename
+
+	fileName := "user_avatar_"+strconv.Itoa(int(UserId))+"_"+file.Filename
+	path := "/views/images/" + fileName
 	err = ctx.SaveUploadedFile(file, "."+path)
 	if err != nil {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_IOERR, "头像保存失败"))
@@ -115,7 +123,7 @@ func UploadUserAvatar(ctx *gin.Context) {
 	client := micro.NewService()
 	userService := user.NewUserService(config.USER, client.Client())
 
-	rsp, err := userService.UploadAvatar(context.TODO(), &user.AvatarRequest{UserId: userId, AvatarUrl: path})
+	rsp, err := userService.UploadAvatar(context.TODO(), &user.AvatarRequest{UserId: UserId, AvatarUrl: "/home/images/"+fileName})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_IOERR, "头像保存失败:"+msg.Detail))
@@ -140,6 +148,7 @@ func UpdateUserName(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_SESSIONERR, "请先登录"))
 		return
 	}
+	UserId := userInfo.(User).Id
 
 	name := ctx.DefaultPostForm("name", "")
 	if name == "" {
@@ -149,7 +158,7 @@ func UpdateUserName(ctx *gin.Context) {
 
 	client := micro.NewService()
 	userService := user.NewUserService(config.USER, client.Client())
-	rsp, err := userService.UpdateName(context.TODO(), &user.UpNameRequest{UserId: userInfo.Id, Name: name})
+	rsp, err := userService.UpdateName(context.TODO(), &user.UpNameRequest{UserId: UserId, Name: name})
 	if err != nil {
 		msg := GetServiceError(err.Error())
 		ctx.JSON(http.StatusOK, GetReturn("", utils.RECODE_IOERR, "更新失败:"+msg.Detail))

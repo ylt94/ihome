@@ -13,7 +13,7 @@ import (
 	order "github.com/ylt94/ihome/services/order/proto/order"
 )
 
-const TIMEFORMAT = "2006-01-02"
+const TIMEFORMAT = "2006-01-02 15:04:05"
 
 type Order struct{}
 
@@ -45,8 +45,8 @@ func (e *Order) Create(ctx context.Context, req *order.CreateRequest, rsp *order
 	OrderModel := model.OrderHouse{
 		UserId:      req.UserId,
 		HouseId:     houseModel.Id,
-		BeginDate:   req.StartDate,
-		EndDate:     req.EndDate,
+		BeginDate:   startTime,
+		EndDate:     endTime,
 		Days:        days,
 		HousePrice:  houseModel.Price,
 		Amount:      houseModel.Price * days,
@@ -102,10 +102,10 @@ func (e *Order) List(ctx context.Context, req *order.ListRequest, rsp *order.Lis
 			Comment:   v.Comment,
 			Ctime:     v.CreatedAt.Format(TIMEFORMAT),
 			Days:      v.Days,
-			EndDate:   v.EndDate,
+			EndDate:   v.EndDate.Format(TIMEFORMAT),
 			ImgUrl:    houseMapData[v.HouseId].IndexImageUrl,
 			OrderId:   v.ID,
-			StartDate: v.BeginDate,
+			StartDate: v.BeginDate.Format(TIMEFORMAT),
 			Status:    v.Status,
 			Title:     houseMapData[v.HouseId].Title,
 		}

@@ -18,7 +18,7 @@ $(document).ready(function(){
     $('.modal').on('show.bs.modal', centerModals);      //当模态框出现的时候
     $(window).on('resize', centerModals);
     // 查询房东的订单
-    $.get("/api/v1.0/user/orders?role=landlord", function(resp){
+    $.get("/api/v1.0/user/orders?role=houser", function(resp){
         if ("0" == resp.errno) {
             $(".orders-list").html(template("orders-list-tmpl", {orders:resp.data.orders}));
             $(".order-accept").on("click", function(){

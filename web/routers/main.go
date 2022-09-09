@@ -12,13 +12,6 @@ import (
 	"github.com/ylt94/ihome/web/utils"
 )
 
-type User struct {
-	Id         uint32 `json:"user_id"`
-	Name       string `json:"name"`
-	Mobile     string `json:"mobile"`
-	Avatar_url string `json:"avatar_url"`
-}
-
 func LoadRouters(R *gin.Engine) *gin.Engine {
 	staticRoutes(R)
 	api := R.Group("api/v1.0")
@@ -28,7 +21,10 @@ func LoadRouters(R *gin.Engine) *gin.Engine {
 		api.Use(AuthUserInfo())
 		{
 			userRoutes(api)
+			houseRouter(api)
+			orderRouter(api)
 		}
+		indexRouter(api)
 	}
 
 	return R
@@ -39,6 +35,7 @@ func AuthUserInfo() gin.HandlerFunc {
 		token, _ := ctx.Cookie("user_cookie")
 		if token == "" {
 			ctx.JSON(http.StatusOK, controllers.GetReturn("", utils.RECODE_SESSIONERR, "登录过期，请重新登录!"))
+			ctx.Abort()
 			return
 		}
 
@@ -49,10 +46,11 @@ func AuthUserInfo() gin.HandlerFunc {
 		if err != nil {
 			msg := controllers.GetServiceError(err.Error())
 			ctx.JSON(http.StatusOK, controllers.GetReturn("", utils.RECODE_SESSIONERR, msg.Detail))
+			ctx.Abort()
 			return
 		}
 		user := rsp.GetUser()
-		userInfo := User{Id: uint32(user.Id), Name: user.Name, Mobile: user.Mobile, Avatar_url: user.AvatarUrl}
+		userInfo := controllers.User{Id: uint32(user.Id), Name: user.Name, Mobile: user.Mobile, Avatar_url: user.AvatarUrl}
 		ctx.Set("user_info", userInfo)
 		ctx.Next()
 	}

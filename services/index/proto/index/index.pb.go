@@ -142,7 +142,7 @@ type House struct {
 	Title                string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Price                string   `protobuf:"bytes,3,opt,name=price,proto3" json:"price,omitempty"`
 	AreaName             string   `protobuf:"bytes,4,opt,name=area_name,json=areaName,proto3" json:"area_name,omitempty"`
-	ImageUrl             string   `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	ImageUrl             string   `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3" json:"image_url"`
 	RoomCount            uint32   `protobuf:"varint,6,opt,name=room_count,json=roomCount,proto3" json:"room_count,omitempty"`
 	OrderCount           uint32   `protobuf:"varint,7,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`
 	Address              string   `protobuf:"bytes,8,opt,name=address,proto3" json:"address,omitempty"`

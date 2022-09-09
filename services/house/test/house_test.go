@@ -61,7 +61,7 @@ func TestDetail(T *testing.T) {
 }
 
 func TestUploadImage(T *testing.T) {
-	req := &house.UploadImageRequest{HouseId: 1, Url: "/images/test1.jpg"}
+	req := &house.UploadImageRequest{HouseId: 3, Url: "/home/images/house_3_house_test2.jpg"}
 	rsp := &house.UploadImageResponse{}
 	obj := &handler.House{}
 	err := obj.UploadImage(context.TODO(), req, rsp)

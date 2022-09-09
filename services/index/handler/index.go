@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	_ "encoding/json"
-
 	log "github.com/micro/go-micro/v2/logger"
 	models "github.com/ylt94/ihome/services/index/model"
 
@@ -19,7 +18,7 @@ func (e *Index) Area(ctx context.Context, req *index.AreaRequest, rsp *index.Are
 	model := &models.Area{}
 	model.GetAreas(&res)
 
-	areas := make([]*index.AreaItem, len(res))
+	areas := make([]*index.AreaItem, 0, len(res))
 	for _, item := range res {
 		areas = append(areas, &index.AreaItem{Id: item.Id, Name: item.Name})
 	}
@@ -34,13 +33,15 @@ func (e *Index) Banner(ctx context.Context, req *index.BannerRequest, rsp *index
 	db := models.Db()
 	db.Table("house").Find(&res)
 
-	houses := make([]*index.House, len(res))
+	houses := make([]*index.House, 0, len(res))
 	for _, item := range res {
 		houses = append(houses, &index.House{
 			HouseId: item.Id,
 			Title:   item.Title,
+			ImageUrl: item.IndexImageUrl,
 		})
 	}
+
 	rsp.Houses = houses
 	return nil
 }
